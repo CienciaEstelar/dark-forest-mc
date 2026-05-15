@@ -1,0 +1,13 @@
+.env
+output_sim/
+output_control/
+output_analisis/
+output_paper/
+output_paper_es/
+__pycache__/
+*.pyc
+*.aux
+*.log
+*.out
+*.pdf
+!dark_forest_paper_es.pdf

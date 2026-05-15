@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premortem — Publicación del Artículo del Bosque Oscuro</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0e1a;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 1100px;
+    margin: auto;
+  }
+  h1 {
+    font-size: 2.2rem;
+    color: #ffffff;
+    border-bottom: 2px solid #2a3050;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  h2 {
+    font-size: 1.6rem;
+    color: #c0d0ff;
+    margin-top: 2.5rem;
+    margin-bottom: 0.8rem;
+  }
+  h3 {
+    font-size: 1.2rem;
+    margin: 1rem 0 0.4rem;
+  }
+  .meta {
+    color: #8899bb;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+  /* Sección de síntesis */
+  .synthesis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin: 1.5rem 0;
+  }
+  .synth-card {
+    background: #111827;
+    border: 1px solid #2a3050;
+    border-radius: 12px;
+    padding: 1.4rem;
+  }
+  .synth-card.full-width { grid-column: 1 / -1; }
+  .synth-card .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8899bb;
+    margin-bottom: 0.4rem;
+  }
+  .synth-card .value { font-size: 1.05rem; color: #e8e8f0; }
+  .severity-badge {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 0.4rem;
+  }
+  .severity-high { background: #5c1a1a; color: #ff8080; }
+  .severity-medium { background: #5c4a1a; color: #ffcc80; }
+  .severity-low { background: #1a3a1a; color: #80cc80; }
+  /* Tarjetas de fallo */
+  .failure-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.2rem;
+    margin: 1.5rem 0;
+  }
+  .failure-card {
+    background: #111827;
+    border: 1px solid #2a3050;
+    border-radius: 12px;
+    padding: 1.4rem;
+    border-left: 4px solid;
+  }
+  .card-accent-1 { border-left-color: #ff6b6b; }
+  .card-accent-2 { border-left-color: #ffa94d; }
+  .card-accent-3 { border-left-color: #ffd43b; }
+  .card-accent-4 { border-left-color: #69db7c; }
+  .card-accent-5 { border-left-color: #74c0fc; }
+  .card-accent-6 { border-left-color: #da77f2; }
+  .failure-card h3 { color: #ffffff; font-size: 1.05rem; margin-bottom: 0.6rem; }
+  .failure-card .story {
+    font-size: 0.9rem;
+    color: #c0c8d8;
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+  .failure-card .assumption {
+    background: #1a1e2e;
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #ffaaaa;
+    margin-bottom: 0.8rem;
+  }
+  .failure-card .signals {
+    font-size: 0.85rem;
+    color: #aabbcc;
+  }
+  .failure-card .signals strong { color: #ffcc80; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    background: #111827;
+    border: 1px solid #2a3a50;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+  .checklist li::before { content: "☐ "; color: #69db7c; font-weight: bold; }
+  .plan-revised {
+    background: #0d1a1a;
+    border: 1px solid #2a5040;
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+  }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid #2a3050;
+    font-size: 0.8rem;
+    color: #667799;
+    text-align: center;
+  }
+  .agent-count {
+    color: #ffd43b;
+    font-weight: 700;
+  }
+  @media (max-width: 700px) {
+    body { padding: 1rem; }
+    .synthesis-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🪦 Informe de Premortem</h1>
+<div class="meta">
+  <strong>Objetivo:</strong> Publicación del artículo “La Geometría Galáctica Domina sobre la Dinámica de Destrucción” en MNRAS, mayo 2026.<br>
+  <strong>Encuadre:</strong> Han pasado 6 meses. El artículo ha fracasado. No ha conseguido impacto y su resultado principal no ha permeado en la comunidad científica.<br>
+  <strong>Fecha del premortem:</strong> 10 de mayo de 2026 &nbsp;|&nbsp; <strong>Agentes ejecutados:</strong> <span class="agent-count">6</span>
+</div>
+
+<!-- ====== SÍNTESIS ====== -->
+<h2>📊 Síntesis</h2>
+<div class="synthesis-grid">
+  <div class="synth-card">
+    <div class="label">🔴 El Fallo Más Probable</div>
+    <div class="value"><strong>Falta de falsabilidad inmediata.</strong> Sin una predicción observacional clara, el artículo no enganchará con la comunidad SETI experimental y quedará como un ejercicio teórico más. La mayoría de los modelos de la paradoja de Fermi sufren este destino.</div>
+  </div>
+  <div class="synth-card">
+    <div class="label">⚠️ El Fallo Más Peligroso</div>
+    <div class="value"><strong>Mala interpretación del resultado principal.</strong> Que la comunidad lea solo Δr ≈ 0 y concluya que “el Bosque Oscuro no hace nada” anularía la contribución central, incluso si se cita el artículo.</div>
+  </div>
+  <div class="synth-card full-width">
+    <div class="label">💡 El Supuesto Oculto</div>
+    <div class="value"><em>“La calidad científica se impondrá por sí sola.”</em> El autor asume que un artículo sólido y bien revisado encontrará su audiencia automáticamente, sin difusión proactiva ni relaciones con observadores.</div>
+  </div>
+</div>
+
+<div class="plan-revised">
+  <strong>🔄 Plan Revisado:</strong><br>
+  • Añadir una predicción contrastable en §5: “Si el régimen subpoissoniano es real, la distribución de fuentes de radio en galaxias similares debería mostrar agrupamiento con robs/P &lt; 1 en el anillo de habitabilidad.”<br>
+  • Cambiar el título para reflejar la transición: <em>“Del Silencio a la Concentración: Cómo la Hipótesis del Bosque Oscuro Moldea el Agrupamiento Espacial de Civilizaciones.”</em><br>
+  • Dockerizar el código y subir imagen a Docker Hub + tutorial de 5 min.<br>
+  • Contactar proactivamente con radioastrónomos para discutir tests observacionales.<br>
+  • Enviar comunicado de prensa con la figura de transición de régimen a la oficina de prensa de MNRAS.
+</div>
+
+<h3>✅ Lista de Verificación Pre-Publicación</h3>
+<ul class="checklist">
+  <li>Añadir una predicción observacional concreta en la sección 5 (Limitaciones y Trabajo Futuro).</li>
+  <li>Reescribir el título para destacar la transición de régimen.</li>
+  <li>Crear un Dockerfile y probar que el pipeline se ejecuta con un solo comando.</li>
+  <li>Preparar una figura resumen para redes sociales mostrando Δr en los dos regímenes.</li>
+  <li>Contactar a un investigador con afiliación institucional para co-difundir el artículo.</li>
+</ul>
+
+<!-- ====== TARJETAS DE FALLO ====== -->
+<h2>🔍 Análisis Profundo — 6 Modos de Fallo</h2>
+<div class="failure-grid">
+
+  <div class="failure-card card-accent-1">
+    <h3>1️⃣ Falta de falsabilidad inmediata</h3>
+    <span class="severity-badge severity-high">Alta probabilidad</span>
+    <span class="severity-badge severity-high">Alto impacto</span>
+    <p class="story">El artículo se publica en mayo. Durante el verano, investigadores comentan que el modelo es “interesante pero no refutable”. El autor intenta derivar una predicción pero no la incluye en el paper. En septiembre, un review en <em>Nature Astronomy</em> omite el artículo. Las citas se estancan en 3.</p>
+    <div class="assumption">🔮 Supuesto: “Una transición de régimen en el espacio de parámetros es suficiente para interesar a la comunidad observacional.”</div>
+    <p class="signals"><strong>Señales tempranas:</strong> Cero solicitudes de colaboración de radioastrónomos en los primeros 2 meses; las menciones en redes sociales son solo de teóricos.</p>
+  </div>
+
+  <div class="failure-card card-accent-2">
+    <h3>2️⃣ Rechazo del marco sociológico</h3>
+    <span class="severity-badge severity-medium">Probabilidad media</span>
+    <span class="severity-badge severity-high">Alto impacto</span>
+    <p class="story">Un grupo de Oxford publica un preprint criticando la asignación de tipos sociológicos como “ciencia ficción cuantificada”. El autor responde señalando el análisis de Sobol, pero el estigma queda. Otros grupos deciden no citar el trabajo para no asociarse con un modelo “especulativo”.</p>
+    <div class="assumption">🔮 Supuesto: “El análisis de sensibilidad Sobol hace aceptables los parámetros sociológicos arbitrarios.”</div>
+    <p class="signals"><strong>Señales tempranas:</strong> Comentarios negativos en foros de astro-ph; rechazo de invitación a congreso por “falta de realismo sociológico”.</p>
+  </div>
+
+  <div class="failure-card card-accent-3">
+    <h3>3️⃣ Mala interpretación del resultado principal</h3>
+    <span class="severity-badge severity-high">Alta probabilidad</span>
+    <span class="severity-badge severity-high">Muy alto impacto</span>
+    <p class="story">El título enfatiza “La Geometría Galáctica Domina”, lo que lleva a lectores apresurados a concluir que el Bosque Oscuro no es relevante. El verdadero hallazgo —que a alta densidad el efecto es masivo— queda enterrado en §3.2.3. Las citas solo mencionan “Δr ≈ 0”.</p>
+    <div class="assumption">🔮 Supuesto: “Los lectores leerán el artículo completo antes de opinar.”</div>
+    <p class="signals"><strong>Señales tempranas:</strong> Citas que solo mencionan el resultado de baja densidad sin hacer referencia al régimen optimista.</p>
+  </div>
+
+  <div class="failure-card card-accent-4">
+    <h3>4️⃣ Problemas de reproducibilidad</h3>
+    <span class="severity-badge severity-medium">Probabilidad media</span>
+    <span class="severity-badge severity-medium">Impacto medio</span>
+    <p class="story">Un investigador intenta replicar los resultados pero falla por incompatibilidad de versiones de numpy. Reporta el error en GitHub. El autor corrige el requirements.txt, pero la desconfianza ya está sembrada. Otro intento falla por falta de RAM (el control optimista requiere 32 GB).</p>
+    <div class="assumption">🔮 Supuesto: “El código público es suficiente sin un entorno dockerizado ni un tutorial de ejecución.”</div>
+    <p class="signals"><strong>Señales tempranas:</strong> Issues en GitHub sin resolver en las primeras semanas; tasa de clonación del repositorio baja.</p>
+  </div>
+
+  <div class="failure-card card-accent-5">
+    <h3>5️⃣ Falta de difusión por carecer de afiliación</h3>
+    <span class="severity-badge severity-high">Alta probabilidad</span>
+    <span class="severity-badge severity-medium">Impacto medio</span>
+    <p class="story">El artículo es aceptado, pero el autor no recibe invitaciones a conferencias por ser “independiente”. Otro artículo similar respaldado por Harvard-Smithsonian acapara la atención mediática. El artículo queda limitado al lector especializado de MNRAS.</p>
+    <div class="assumption">🔮 Supuesto: “La calidad científica se impondrá por sí sola sin necesidad de difusión institucional.”</div>
+    <p class="signals"><strong>Señales tempranas:</strong> Ninguna solicitud de preprint por parte de periodistas científicos en la primera semana tras la publicación.</p>
+  </div>
+
+  <div class="failure-card card-accent-6">
+    <h3>6️⃣ Saturación del tema</h3>
+    <span class="severity-badge severity-low">Baja probabilidad</span>
+    <span class="severity-badge severity-medium">Impacto medio</span>
+    <p class="story">En junio de 2026, dos artículos independientes (Tokio y SETI Institute) publican simulaciones de la HBO con conclusiones similares. La novedad del artículo se diluye. Los revisores agrupan los tres trabajos sin destacar ninguno.</p>
+    <div class="assumption">🔮 Supuesto: “No hay competencia inminente en el mismo nicho.”</div>
+    <p class="signals"><strong>Señales tempranas:</strong> Aparición de preprints con resúmenes parecidos en arXiv en los meses previos a la publicación.</p>
+  </div>
+
+</div>
+
+<footer>
+  Premortem ejecutado el 10 de mayo de 2026 &nbsp;|&nbsp; Objetivo: Publicación del artículo del Bosque Oscuro en MNRAS &nbsp;|&nbsp; 6 agentes &nbsp;|&nbsp; Archivo: premortem-report-20260510.html
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,613 @@
+% ===========================================================================
+% VERSIÓN OBSOLETA — NO ENVIAR A REVISTA
+%
+% Esta es la versión INGLESA ANTIGUA del paper. Contiene errores corregidos
+% en la versión española (dark_forest_paper_es.tex):
+%   - Ec.(3) cuadrática (P_det < 0 para d > r_eff) → lorentziana en ES
+%   - fp=0.5, ne=2 → fp=1.0, ne=0.22 en ES
+%   - α=0.03 yr⁻¹ → α=0.001 yr⁻¹ en ES
+%   - Afiliación USACH → Investigador independiente en ES
+%   - Sin simulaciones de control → §2.6 añadida en ES
+%
+% Si se requiere versión inglesa: regenerar desde dark_forest_paper_es.tex
+% ===========================================================================
+
+\documentclass[useAMS,usenatbib]{mn2e}
+
+% ─── PACKAGES ────────────────────────────────────────────────────────────────
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{siunitx}
+\usepackage{textcomp}
+
+% \doi not defined by mn2e — provide a hyperlinked definition
+\newcommand{\doi}[1]{\href{https://doi.org/#1}{\nolinkurl{doi:#1}}}
+
+% ─── JOURNAL METADATA ────────────────────────────────────────────────────────
+\title[Dark Forest Monte Carlo]{
+  A Monte Carlo Model of the Dark Forest Hypothesis:\\
+  Stochastic Detection--Destruction Dynamics and\\
+  Spatial Clustering Inversion Across Galactic Population Regimes
+}
+
+\author[J.~Galaz]{
+  Juan Galaz$^{1}$\thanks{E-mail: juan.galaz.a@usach.cl;
+  ORCID: 0009-0007-7474-7560}
+  \\
+  $^{1}$Departamento de Ingenier\'ia en Minas,
+  Universidad de Santiago de Chile (USACH),
+  Av. Libertador Bernardo O'Higgins 3363,
+  Estaci\'on Central, Santiago, Chile
+}
+
+\date{Accepted 2026. Received 2026; in original form 2026}
+
+\pubyear{2026}
+
+\begin{document}
+
+\maketitle
+
+% ─── ABSTRACT ────────────────────────────────────────────────────────────────
+\begin{abstract}
+We present a stochastic Monte Carlo simulation of the Dark Forest
+hypothesis, the conjecture that civilizations in the galaxy preemptively
+destroy one another upon mutual detection, and characterise the
+resulting destruction rates and spatial distributions across two
+population regimes.
+Under \emph{pessimistic} Drake parameters ($N_c = 440$, 10 independent
+seeds) the model yields a destruction rate of $16.1 \pm 1.8$ per cent,
+with surviving civilizations distributed at a mean nearest-neighbour
+distance of $1842 \pm 60$\,ly; a Kolmogorov--Smirnov test confirms
+that this distribution is significantly super-Poissonian
+($p = 1.91\times10^{-42}$, $\text{ratio}_\text{obs/Poisson} = 1.42 \pm 0.05$),
+indicating that Dark Forest dynamics create spatial voids around survivors.
+Under \emph{optimistic} Drake parameters ($N_c = 10{,}000$ cap, 10 seeds)
+the destruction rate rises to $85.8 \pm 0.2$ per cent, with survivors
+concentrated at $478 \pm 17$\,ly;
+critically, the obs/Poisson ratio \emph{inverts} to $0.578 \pm 0.020$
+(sub-Poissonian), indicating clustering rather than dispersal:
+a regime transition not previously reported in the literature.
+A global Sobol sensitivity analysis ($N = 512$, 5{,}120 evaluations)
+identifies no single dominant parameter, with first-order indices
+$S_1 \in [0.09, 0.12]$ for all four parameters examined, confirming
+that the qualitative results are robust to parameter uncertainty.
+These findings suggest a density-dependent inversion in the spatial
+structure of surviving civilizations: sparse galaxies produce
+super-Poissonian survivors (Dark Forest voids), while dense galaxies
+produce sub-Poissonian survivors (forced clustering near GHZ refugia).
+\end{abstract}
+
+\begin{keywords}
+astrobiology --- extraterrestrial intelligence --- Fermi paradox ---
+Monte Carlo methods --- spatial statistics --- galactic habitable zone
+\end{keywords}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Introduction}
+\label{sec:intro}
+% ─────────────────────────────────────────────────────────────────────────────
+
+The Fermi paradox, the apparent contradiction between the high
+prior probability of extraterrestrial technological civilizations and
+their observational absence, has motivated a wide class of
+explanatory hypotheses
+\citep{fermi1950,hart1975,brin1983,webb2002}.
+Among the most radical is the \emph{Dark Forest hypothesis} (DFH),
+in which the silence of the cosmos is a strategic equilibrium: any
+civilization that reveals its location risks annihilation by a more
+advanced neighbour, and therefore the optimal strategy is either
+silence or preemptive attack
+\citep{cixin2008,devladar2013}.
+
+Formal models of the DFH remain scarce in the peer-reviewed
+astrobiological literature.
+\citet{forgan2009} developed the most widely cited numerical testbed
+for Fermi-paradox hypotheses, using Monte Carlo realisations of the
+Drake equation, but modelled destruction as a fixed probability
+($P_\text{destroy} = 0.5$) independent of detection, distance or
+technological disparity.
+\citet{devladar2013} formalised the game-theoretic foundation of the
+DFH, showing that preemptive attack is a Nash equilibrium under
+certain payoff matrices, but did not simulate the galactic-scale
+spatial consequences.
+\citet{foucher2023} and \citet{forgan2011} independently noted that
+the spatial distribution of survivors should depend on population
+density, but neither quantified the regime transition.
+
+The present work addresses this gap by implementing a full
+detection--decision--destruction Monte Carlo pipeline with the
+following novel elements:
+\begin{enumerate}
+  \item A continuous three-dimensional detection probability function
+        based on technological age and a physically motivated maximum
+        detection radius \citep[$r_\text{max} = 1000$\,ly,][]{troitskij1989,
+        loeb2007};
+  \item Heterogeneous sociological types (aggressive, defensive,
+        pacifist, curious) with type-dependent attack thresholds
+        following \citet{devladar2013};
+  \item A continuous Galactic Habitable Zone (GHZ) density profile
+        based on \citet{lineweaver2004}, replacing the uniform-ring
+        approximation;
+  \item A historical memory of destroyed civilizations that reduces
+        communication probability in hazardous directions;
+  \item Dual-scenario analysis (pessimistic/optimistic Drake
+        parameters) enabling regime comparison;
+  \item Global Sobol sensitivity analysis with $N = 512$
+        Saltelli samples \citep{saltelli2010}.
+\end{enumerate}
+
+The central result, a density-dependent inversion of the
+obs/Poisson spatial ratio, has not been reported previously and
+constitutes the primary scientific contribution of this paper.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Model}
+\label{sec:model}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Civilisation generation}
+\label{sec:civgen}
+
+Civilisations are generated by sampling the Drake equation:
+\begin{equation}
+  N_c = N_\star \cdot f_p \cdot n_e \cdot f_l \cdot f_i \cdot f_c
+  \label{eq:drake}
+\end{equation}
+where $N_\star = 2\times10^{11}$ is the number of Milky Way stars
+suitable for life-bearing planets, $f_p = 0.5$ the fraction with
+planets, $n_e = 2$ the mean number of habitable-zone planets per
+system, and $f_l$, $f_i$, $f_c$ are the life, intelligence and
+communication fractions whose product defines the scenario (Table
+\ref{tab:scenarios}).
+
+Galactic positions are drawn from the continuous GHZ density profile
+\citep{lineweaver2004}:
+\begin{equation}
+  f(r) \propto \exp\!\left[-\frac{(r - r_\text{peak})^2}{2\sigma_r^2}\right],
+  \quad r_\text{peak} = 25{,}000\,\text{ly},\quad \sigma_r = 8{,}000\,\text{ly}
+  \label{eq:ghz}
+\end{equation}
+with a disc half-height of 300\,ly sampled uniformly.
+Birth times are drawn uniformly over the galaxy's estimated age of
+$1.36\times10^{10}$\,yr, and technological lifetimes follow a
+log-normal distribution with median $10^4$\,yr
+\citep{sandberg2018}.
+
+\subsection{Sociological heterogeneity}
+\label{sec:socio}
+
+Each civilisation is assigned one of four sociological types:
+\emph{aggressive} (probability 0.30), \emph{defensive} (0.40),
+\emph{pacifist} (0.20), \emph{curious} (0.10).
+The type determines the attack-threshold parameter
+$\theta_\text{threat}$ and the response to neighbourhood context.
+An aggressive civilisation attacks whenever the relative
+technological disparity of a detected neighbour exceeds $\theta_\text{threat}$;
+a pacifist civilisation prioritises concealment; a curious civilisation
+increases its emission radius by a factor of three but reduces it by
+80 per cent within 2{,}000\,ly of a previously destroyed civilisation
+(historical memory of hazard zones).
+
+\subsection{Detection probability}
+\label{sec:detection}
+
+The probability of civilisation $i$ detecting civilisation $j$ at
+Euclidean distance $d$ at time $t$ is:
+\begin{equation}
+  P_\text{det}(d, \tau_i, \nu_i) =
+    \left[1 - \left(\frac{d}{r_\text{eff}(\tau_i, \nu_i)}\right)^2\right]
+    \cdot (1 - p_\text{fn}) + p_\text{fp}
+  \label{eq:pdet}
+\end{equation}
+where $\tau_i$ is the technological age of the hunter, $\nu_i$ its
+technological level, $p_\text{fn} = 0.05$ the false-negative rate, and
+$p_\text{fp} = 0.01$ the false-positive rate.
+The effective detection radius grows logistically:
+\begin{equation}
+  r_\text{eff}(\tau, \nu) =
+    \frac{r_\text{max}}{1 + (r_\text{max}-1)\,e^{-\alpha\tau}}
+    \cdot (1 + \max(0,\nu))
+  \label{eq:reff}
+\end{equation}
+with $r_\text{max} = 1000$\,ly \citep{troitskij1989,loeb2007} and
+growth rate $\alpha = 0.03$\,yr$^{-1}$.
+A 3-D cKDTree spatial index \citep{maneewongvatana1999} limits
+neighbour queries to civilisations within the light-travel horizon,
+reducing the per-event complexity from $O(N^2)$ to $O(N \log N)$.
+
+\subsection{Extended lifetime}
+\label{sec:lifetime}
+
+To allow interactions beyond the mean technological lifetime $L$,
+civilisations remain detectable for an extended window
+$L_\text{ext} = 1.43\times10^8$\,yr after birth \citep{sandberg2018}.
+This parameter ensures that the simulation samples a sufficient
+number of coexisting civilisation pairs across all seeds.
+
+\subsection{Sensitivity analysis}
+\label{sec:sobol}
+
+Global sensitivity indices \citep{saltelli2010} were computed for
+four parameters: $\theta_\text{threat} \in [0.3,0.9]$,
+$\alpha \in [0.001,0.1]$\,yr$^{-1}$, $f_\text{aggressive} \in [0.1,0.5]$,
+and $r_\text{max} \in [50,500]$\,ly.
+Saltelli sampling with $N = 512$ base samples yields 5{,}120 model
+evaluations; results are reported in Section \ref{sec:sobol_results}.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Results}
+\label{sec:results}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Destruction rates}
+\label{sec:destruction}
+
+Table \ref{tab:results} summarises the destruction statistics for
+both scenarios across 10 independent seeds.
+
+\begin{table*}
+  \centering
+  \caption{Summary statistics for pessimistic and optimistic scenarios
+           (10 seeds each). Uncertainties are $\pm 1\sigma$ across seeds.}
+  \label{tab:results}
+  \begin{tabular}{lcccccc}
+    \toprule
+    Scenario & $N_c$ & Destroyed & Rate (\%) &
+    $\bar{d}_\text{nn}$ (ly) & $r_\text{obs/P}$ & KS $p$-value \\
+    \midrule
+    Pessimistic & 440 & $70.6 \pm 8.0$ & $16.1 \pm 1.8$ &
+    $1842 \pm 60$ & $1.42 \pm 0.05$ & $1.91\times10^{-42}$ \\
+    Optimistic  & $10{,}000^\dagger$ & $8583 \pm 22$ & $85.8 \pm 0.2$ &
+    $478 \pm 17$  & $0.578 \pm 0.020$ & $<2.2\times10^{-308\ddagger}$ \\
+    \bottomrule
+  \end{tabular}
+  \begin{flushleft}
+    \footnotesize
+    $^\dagger$ Raw Drake estimate: $8.8\times10^6$; capped at $10^4$
+    for computational tractability (see Section \ref{sec:limitations}).\\
+    $^\ddagger$ Numerical underflow in \textsc{scipy} \texttt{float64};
+    clustering is more extreme than double precision can represent.
+  \end{flushleft}
+\end{table*}
+
+Under pessimistic parameters the destruction rate is $16.1 \pm 1.8$
+per cent (coefficient of variation CV~=~11.4 per cent across seeds),
+confirming that the result is robust to initialisation.
+Under optimistic parameters the rate rises to $85.8 \pm 0.2$ per cent
+(CV~=~0.26 per cent), a factor of~5 increase that reflects the
+dramatically higher encounter rate at $N_c = 10{,}000$.
+
+\subsection{Spatial clustering and the obs/Poisson ratio}
+\label{sec:clustering}
+
+For each seed and scenario we compute the mean nearest-neighbour
+distance $\bar{d}_\text{nn}$ among surviving active civilisations and
+compare it to the Poisson expectation for a homogeneous random field
+of the same density:
+\begin{equation}
+  d_\text{Poisson} = 0.5538 \left(\frac{V_\text{eff}}{N_\text{active}}\right)^{1/3}
+  \label{eq:poisson_nn}
+\end{equation}
+where $V_\text{eff}$ is the effective galactic volume sampled.
+The ratio $r_\text{obs/P} = \bar{d}_\text{nn}/d_\text{Poisson}$
+quantifies departure from randomness: values $>1$ indicate that
+survivors are more dispersed than a Poisson field (super-Poissonian),
+while values $<1$ indicate clustering (sub-Poissonian).
+
+\subsubsection{Pessimistic regime: super-Poissonian survivors}
+
+In the pessimistic scenario, $r_\text{obs/P} = 1.42 \pm 0.05$
+across 10 seeds.
+A KS test against the theoretical Poisson nearest-neighbour
+distribution yields $p = 1.91\times10^{-42}$, confirming highly
+significant departure.
+The interpretation is that Dark Forest dynamics act as a
+\emph{spatial filter}: when density is low, the survivors are
+preferentially those that were already isolated before the first
+detection event, creating voids of size $\sim 1800$\,ly around each
+survivor.
+This is qualitatively consistent with the void-based survival model
+of \citet{forgan2011}.
+
+\subsubsection{Optimistic regime: sub-Poissonian survivors,
+  a previously unreported inversion}
+\label{sec:inversion}
+
+In the optimistic scenario, $r_\text{obs/P} = 0.578 \pm 0.020$,
+a statistically unambiguous inversion of the clustering regime.
+The KS $p$-value is below \textsc{float64} precision
+($p < 2.2\times10^{-308}$).
+
+This inversion arises because at high civilisation density
+($N_c = 10{,}000$ in a disc of radius $\sim 50{,}000$\,ly),
+the GHZ density gradient dominates over the Dark Forest
+dispersal effect.
+Survivors are overwhelmingly concentrated in the GHZ ring
+($r_\text{peak} = 25{,}000$\,ly), producing a sub-Poissonian
+distribution relative to the uniform-density Poisson expectation.
+The spatial structure of survivors transitions from
+\emph{void-dominated} (sparse: survivors in the gaps between
+destruction events) to \emph{GHZ-dominated} (dense: survivors
+clustered in the habitability sweet spot).
+
+This result was not reported by \citet{forgan2009},
+\citet{forgan2011}, or \citet{foucher2023}.
+\citet{foucher2023} reported sub-Poissonian distributions using
+the dispersion index $R = \sigma^2/\mu$ and the pair correlation
+function $g(r)$, attributing them to predator--prey dynamics
+rather than the GHZ structural effect identified here.
+
+\subsection{Sobol sensitivity analysis}
+\label{sec:sobol_results}
+
+Table \ref{tab:sobol} reports first-order ($S_1$) and
+total-effect ($S_T$) Sobol indices for the four parameters.
+
+\begin{table}
+  \centering
+  \caption{Sobol sensitivity indices for the destruction rate.
+           $N = 512$ Saltelli samples (5{,}120 evaluations).}
+  \label{tab:sobol}
+  \begin{tabular}{lcccc}
+    \toprule
+    Parameter & Range & $S_1$ & $S_T$ \\
+    \midrule
+    $\theta_\text{threat}$ & $[0.3,0.9]$     & $0.122\pm0.115$ & $0.934\pm0.115$ \\
+    $\alpha$               & $[0.001,0.1]$   & $0.103\pm0.108$ & $1.026\pm0.153^\star$ \\
+    $f_\text{aggressive}$  & $[0.1,0.5]$     & $0.091\pm0.105$ & $0.932\pm0.137$ \\
+    $r_\text{max}$         & $[50,500]$\,ly  & $0.112\pm0.119$ & $1.072\pm0.138^\star$ \\
+    \bottomrule
+  \end{tabular}
+  \begin{flushleft}
+    \footnotesize
+    $^\star$ Marginally exceeds unity due to Monte Carlo noise in the
+    Saltelli estimator for stochastic outputs with CV\,=\,72\,per cent;
+    both values lie within $1\sigma$ of 1.0 \citep{saltelli2010}.
+  \end{flushleft}
+\end{table}
+
+All first-order indices are similar ($S_1 \approx 0.09$--$0.12$),
+indicating no single dominant parameter.
+Total-effect indices are uniformly large ($S_T \approx 0.93$--$1.07$),
+indicating strong high-order interactions.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Discussion}
+\label{sec:discussion}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{The density-dependent regime transition}
+
+The central finding is a density-dependent inversion in survivor
+spatial structure from super-Poissonian (sparse) to sub-Poissonian
+(dense).
+In the sparse regime, the Dark Forest \emph{dispersal effect}
+dominates: survivors tend to be initially isolated, biasing their
+distribution toward voids and raising $r_\text{obs/P} > 1$.
+In the dense regime, the \emph{GHZ concentration effect} dominates:
+when encounters are ubiquitous, survival probability is roughly
+uniform and the survivor distribution mirrors the GHZ birth
+distribution, which is concentrated relative to the uniform Poisson
+baseline, giving $r_\text{obs/P} < 1$.
+
+The transition occurs near the density where the mean
+inter-civilisation distance equals $r_\text{max}$.
+In the pessimistic scenario the mean distance is $\sim 2{,}200$\,ly
+$> r_\text{max}$; in the optimistic scenario it is $\sim 800$\,ly
+$< r_\text{max}$.
+
+\subsection{Comparison with previous work}
+
+\citet{forgan2009} found $\sim 361$ civilisations under ``Rare Life''
+parameters with $P_\text{destroy} = 0.5$, comparable in scale to
+our pessimistic scenario.
+His model did not compute spatial statistics of survivors.
+The present model extends his framework with a physically motivated
+detection function, sociological heterogeneity, and explicit spatial
+analysis.
+
+\citet{foucher2023} reported sub-Poissonian survivors in high-density
+ecological models, consistent with our optimistic scenario.
+The GHZ-concentration mechanism identified here is complementary to
+the predator--prey minimum-distance mechanism of \citet{foucher2023}.
+
+\subsection{The attack-threshold free parameter}
+
+No published study constrains $\theta_\text{threat}$ empirically
+\citep{devladar2013}.
+The Sobol analysis shows $S_1(\theta_\text{threat}) = 0.122$
+(largest first-order contributor), but the qualitative inversion
+result is robust across the full $[0.3,\,0.9]$ range examined.
+Bayesian inference against the SETI non-detection record could
+provide informative priors and is a natural extension.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Limitations and future work}
+\label{sec:limitations}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\textit{Computational cap.}
+The raw optimistic Drake estimate is $N_c = 8.8\times10^6$,
+capped at $10^4$ (0.11 per cent) for tractability.
+The cap affects absolute rates but not the qualitative inversion,
+which depends on the ratio of mean separation to $r_\text{max}$.
+Vectorising the pair-detection loop with \textsc{numpy} broadcasting
+would enable $N_c \sim 10^6$ and is left for future work.
+
+\textit{Stellar proper motion.}
+Fixed positions ignore stellar drift \citep[$\sim 30$\,km\,s$^{-1}$;][]{carrollnellenback2019},
+which would diffuse the GHZ concentration and reduce the magnitude
+of the sub-Poissonian signal.
+
+\textit{Free parameters.}
+Bayesian inference against SETI observations would replace ad-hoc
+values of $\theta_\text{threat}$, sociological fractions, and
+detection noise rates with data-driven posteriors.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Conclusions}
+\label{sec:conclusions}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{enumerate}
+  \item Under pessimistic Drake parameters ($N_c = 440$, 10 seeds),
+        the Dark Forest mechanism destroys $16.1 \pm 1.8$\,per cent
+        of civilisations, producing a super-Poissonian survivor
+        distribution ($r_\text{obs/P} = 1.42\pm0.05$,
+        KS $p = 1.91\times10^{-42}$, CV\,=\,11.4\,per cent).
+
+  \item Under optimistic parameters ($N_c = 10{,}000$, 10 seeds),
+        the rate rises to $85.8 \pm 0.2$\,per cent and the
+        survivor distribution \emph{inverts} to sub-Poissonian
+        ($r_\text{obs/P} = 0.578\pm0.020$,
+        KS $p < 2.2\times10^{-308}$, CV\,=\,0.26\,per cent).
+
+  \item This density-dependent inversion of the obs/Poisson ratio
+        has not been previously reported and constitutes the
+        primary novel contribution.
+        It arises from competition between a Dark Forest dispersal
+        effect (dominant at low density) and a GHZ concentration
+        effect (dominant at high density).
+
+  \item Global Sobol analysis ($N=512$, 5{,}120 evaluations)
+        confirms that no single parameter dominates
+        ($S_1 \in [0.09,\,0.12]$) and that results are robust
+        to parameter uncertainty.
+
+  \item The attack threshold $\theta_\text{threat} = 0.7$ is
+        the largest first-order Sobol contributor ($S_1 = 0.122$)
+        but remains observationally unconstrained; Bayesian
+        inference against the SETI non-detection record is
+        recommended as an immediate next step.
+\end{enumerate}
+
+Code and data will be deposited at
+\url{https://github.com/juan-galaz/dark-forest-mc}
+upon acceptance.
+
+\section*{Acknowledgements}
+
+The author thanks the open-source communities behind
+\textsc{numpy}, \textsc{scipy}, \textsc{pandas}, \textsc{SALib}
+and \textsc{pytest}.
+This research received no external funding.
+
+\section*{Data Availability}
+
+All result files (\texttt{multiseed\_results.json},
+\texttt{multiseed\_optimista\_results.json},
+\texttt{sobol\_bosque\_oscuro.json},
+\texttt{resumen\_analisis.json}) and the regression test suite
+(5/5 passing, seeds 42, 7, 13, 99, 256) will be deposited
+in a public repository upon acceptance.
+
+\appendix
+\section{Model parameters}
+\label{app:params}
+
+\begin{table}
+  \centering
+  \caption{Drake filter parameters for both scenarios.}
+  \label{tab:scenarios}
+  \begin{tabular}{lccc}
+    \toprule
+    Scenario & $f_l$ & $f_i$ & $f_c$ \\
+    \midrule
+    Pessimistic & $10^{-3}$ & $10^{-3}$ & $10^{-2}$ \\
+    Optimistic  & $0.10$    & $0.01$    & $0.20$    \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}
+  \centering
+  \caption{Fixed model parameters.}
+  \label{tab:params}
+  \begin{tabular}{lll}
+    \toprule
+    Parameter & Value & Reference \\
+    \midrule
+    $N_\star$ & $2\times10^{11}$ & -- \\
+    $r_\text{max}$ & 1000\,ly & \citet{troitskij1989,loeb2007} \\
+    $r_\text{peak}$ (GHZ) & 25{,}000\,ly & \citet{lineweaver2004} \\
+    $\sigma_r$ (GHZ) & 8{,}000\,ly & \citet{lineweaver2004} \\
+    $L_\text{ext}$ & $1.43\times10^8$\,yr & \citet{sandberg2018} \\
+    $\theta_\text{threat}$ & 0.70 & free \\
+    $\alpha$ & 0.03\,yr$^{-1}$ & free \\
+    $p_\text{fn}$ & 0.05 & free \\
+    $p_\text{fp}$ & 0.01 & free \\
+    Sobol $N$ & 512 & \citet{saltelli2010} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{thebibliography}{99}
+
+\bibitem[\protect\citeauthoryear{Brin}{1983}]{brin1983}
+Brin G.~D., 1983, QJRAS, 24, 283
+
+\bibitem[\protect\citeauthoryear{Carroll-Nellenback et al.}{2019}]{carrollnellenback2019}
+Carroll-Nellenback J., Frank A., Wright J., Scharf C., 2019, AJ, 158, 117.
+\newblock \doi{10.3847/1538-3881/ab31a3}
+
+\bibitem[\protect\citeauthoryear{Cixin}{2008}]{cixin2008}
+Cixin L., 2008, The Dark Forest. Chongqing Publishing House
+
+\bibitem[\protect\citeauthoryear{de Vladar}{2013}]{devladar2013}
+de Vladar H.~P., 2013, IJA, 12, 53.
+\newblock \doi{10.1017/S1473550412000407}
+
+\bibitem[\protect\citeauthoryear{Fermi}{1950}]{fermi1950}
+Fermi E., 1950, unpublished remarks, Los Alamos
+
+\bibitem[\protect\citeauthoryear{Forgan}{2009}]{forgan2009}
+Forgan D.~H., 2009, IJA, 8, 121.
+\newblock \doi{10.1017/S1473550408004321}
+
+\bibitem[\protect\citeauthoryear{Forgan}{2011}]{forgan2011}
+Forgan D.~H., 2011, IJA, 10, 341.
+\newblock \doi{10.1017/S1473550411000127}
+
+\bibitem[\protect\citeauthoryear{Foucher}{2023}]{foucher2023}
+Foucher F., 2023, AcAau, 204, 785.
+\newblock \doi{10.1016/j.actaastro.2022.12.007}
+
+\bibitem[\protect\citeauthoryear{Hart}{1975}]{hart1975}
+Hart M.~H., 1975, QJRAS, 16, 128
+
+\bibitem[\protect\citeauthoryear{Lineweaver, Fenner \& Gibson}{2004}]{lineweaver2004}
+Lineweaver C.~H., Fenner Y., Gibson B.~K., 2004, Science, 303, 59.
+\newblock \doi{10.1126/science.1092322}
+
+\bibitem[\protect\citeauthoryear{Loeb \& Zaldarriaga}{2007}]{loeb2007}
+Loeb A., Zaldarriaga M., 2007, JCAP, 2007, 020.
+\newblock \doi{10.1088/1475-7516/2007/01/020}
+
+\bibitem[\protect\citeauthoryear{Maneewongvatana \& Mount}{1999}]{maneewongvatana1999}
+Maneewongvatana S., Mount D.~M., 1999, preprint (arXiv:cs/9901013)
+
+\bibitem[\protect\citeauthoryear{Saltelli et al.}{2010}]{saltelli2010}
+Saltelli A. et al., 2010, Comput.~Phys.~Commun., 181, 259.
+\newblock \doi{10.1016/j.cpc.2009.09.018}
+
+\bibitem[\protect\citeauthoryear{Sandberg, Drexler \& Ord}{2018}]{sandberg2018}
+Sandberg A., Drexler E., Ord T., 2018, AcAau, 150, 24.
+\newblock \doi{10.1016/j.actaastro.2018.04.030}
+
+\bibitem[\protect\citeauthoryear{Troitskij}{1989}]{troitskij1989}
+Troitskij V.~S., 1989, AcAau, 19, 875.
+\newblock \doi{10.1016/0094-5765(89)90079-9}
+
+\bibitem[\protect\citeauthoryear{Webb}{2002}]{webb2002}
+Webb S., 2002, If the Universe Is Teeming with Aliens. Copernicus Books, New York
+
+\end{thebibliography}
+
+\end{document}

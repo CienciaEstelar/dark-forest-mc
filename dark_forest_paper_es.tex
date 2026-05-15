@@ -1,0 +1,1042 @@
+\documentclass[useAMS,usenatbib]{mn2e}
+
+% ─── PAQUETES ─────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{siunitx}
+\usepackage{textcomp}
+
+% \doi no definido en mn2e — definición con hipervínculo
+\newcommand{\doi}[1]{\href{https://doi.org/#1}{\nolinkurl{doi:#1}}}
+
+% ─── METADATOS DE REVISTA ─────────────────────────────────────────────────────
+\title[Bosque Oscuro Monte Carlo]{
+  Del Silencio a la Concentración:\\
+  Transición de Régimen en la Hipótesis del Bosque Oscuro\\
+  Revelada por Simulaciones de Control\\
+  con Dinámica de Destrucción Desactivada
+}
+
+\author[Juan Galaz]{
+  Juan Galaz$^{1}$\thanks{Correo electrónico: juan.galaz@proton.me;
+  ORCID: \href{https://orcid.org/0009-0007-7474-7560}{0009-0007-7474-7560}}
+  \\
+  $^{1}$Investigador independiente, autofinanciado
+}
+
+\pubyear{2026}
+
+\begin{document}
+
+\maketitle
+
+% ─── RESUMEN ──────────────────────────────────────────────────────────────────
+\begin{abstract}
+Presentamos una simulación Monte Carlo estocástica de la hipótesis del
+Bosque Oscuro, la conjetura de que las civilizaciones galácticas se
+destruyen mutuamente de forma preventiva al detectarse, y
+caracterizamos las tasas de destrucción resultantes y las distribuciones
+espaciales en dos regímenes de población.
+Bajo parámetros de Drake \emph{pesimistas} ($N_c = 440$, 50 semillas
+independientes) el modelo produce una tasa de destrucción de
+$16{,}1 \pm 1{,}6$ por ciento, con civilizaciones supervivientes
+distribuidas a una distancia media al vecino más cercano de
+$1837 \pm 52$\,al; una prueba de Kolmogórov--Smirnov
+confirma que esta distribución es significativamente superpoissoniana
+($p = 4{,}89\times10^{-10}$, semilla de referencia,
+$\text{cociente}_\text{obs/Poisson} = 1{,}43 \pm 0{,}05$),
+consistente con la concentración geométrica de nacimientos en la ZGH.
+Simulaciones de control con $P_\text{ataque} = 0$ (10 semillas,
+subconjunto apareado de las 50 principales) producen un cociente de control
+$r_\text{obs/P}^\text{ctrl} = 1{,}42 \pm 0{,}04$, indistinguible
+del cociente con dinámica DF activa
+($\Delta r = +0{,}007 \pm 0{,}066$, $0{,}1\sigma$), indicando que la
+estructura espacial de los supervivientes en el régimen de baja densidad
+está dominada por el perfil ZGH, no por la dinámica de destrucción.
+Bajo parámetros de Drake \emph{optimistas} ($N_c = 10{,}000$ acotado,
+10 semillas) la tasa de destrucción asciende a $85{,}8 \pm 0{,}2$ por
+ciento, con supervivientes concentrados a $478 \pm 17$\,al y el cociente
+obs/Poisson se \emph{invierte} a $0{,}578 \pm 0{,}020$ (subpoissoniano).
+Simulaciones de control en este régimen ($n = 3$ semillas, viable gracias
+a la vectorización del algoritmo de detección) producen
+$r_\text{obs/P}^\text{ctrl} = 1{,}117 \pm 0{,}001$, revelando un efecto
+diferencial masivo del Bosque Oscuro:
+$\Delta r_\text{opt} = -0{,}538 \pm 0{,}020$ ($27\sigma$).
+La transición es completa: en baja densidad la dinámica DF es
+indistinguible de la geometría ZGH ($\Delta r \approx 0$), mientras que
+en alta densidad el DF concentra los supervivientes de forma abrumadora,
+multiplicando el agrupamiento espacial por encima del nivel ZGH.
+Un análisis de sensibilidad de Sobol global ($N = 4{,}096$,
+$49{,}152$ evaluaciones, 5 parámetros) produce índices de primer orden
+cercanos a cero ($S_1 \in [-0{,}02,\;0{,}07]$) con efectos totales
+$S_T < 1{,}0$ en todos los parámetros (convergencia alcanzada,
+intervalos de confianza $\pm 0{,}04$), confirmando que ningún parámetro
+domina individualmente y que las interacciones de alto orden controlan la
+varianza de la tasa de destrucción.
+Estos hallazgos establecen una transición completa dependiente de la
+densidad: en el régimen de baja densidad, la dinámica de destrucción es
+indistinguible de la geometría ZGH ($\Delta r \approx 0$); en el régimen
+de alta densidad, la dinámica DF domina de forma abrumadora la estructura
+espacial ($\Delta r = -0{,}54$, $27\sigma$), concentrando a los
+supervivientes muy por encima del nivel de agrupamiento geométrico.
+\end{abstract}
+
+\begin{keywords}
+astrobiología --- inteligencia extraterrestre --- paradoja de Fermi ---
+métodos Monte Carlo --- estadística espacial --- zona galáctica habitable
+\end{keywords}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Introducción}
+\label{sec:intro}
+% ─────────────────────────────────────────────────────────────────────────────
+
+La paradoja de Fermi, la aparente contradicción entre la alta
+probabilidad a priori de civilizaciones tecnológicas extraterrestres y
+su ausencia observacional, ha motivado una amplia clase de hipótesis
+explicativas \citep{fermi1950,hart1975,brin1983,webb2002}.
+Entre las más radicales se encuentra la \emph{hipótesis del Bosque
+Oscuro} (HBO), en la que el silencio del cosmos es un equilibrio
+estratégico: cualquier civilización que revela su ubicación arriesga
+la aniquilación por un vecino más avanzado, por lo que la estrategia
+óptima es el silencio o el ataque preventivo
+\citep{cixin2008,devladar2013}.
+
+Los modelos formales de la HBO siguen siendo escasos en la literatura
+astrobiológica revisada por pares.
+\citet{forgan2009} desarrolló el banco de pruebas numérico más citado
+para hipótesis de la paradoja de Fermi, utilizando realizaciones Monte
+Carlo de la ecuación de Drake, pero modeló la destrucción como una
+probabilidad fija ($P_\text{destroy} = 0{,}5$) independiente de la
+detección, la distancia o la disparidad tecnológica.
+\citet{devladar2013} formalizó el fundamento de teoría de juegos de la
+HBO, demostrando que el ataque preventivo es un equilibrio de Nash bajo
+ciertas matrices de pagos, pero no simuló las consecuencias espaciales
+a escala galáctica.
+\citet{foucher2023} y \citet{forgan2011} señalaron independientemente
+que la distribución espacial de los supervivientes debería depender de
+la densidad de población, pero ninguno cuantificó la transición de
+régimen.
+
+El presente trabajo aborda esta brecha implementando un pipeline
+Monte Carlo completo de detección--decisión--destrucción con los
+siguientes elementos novedosos:
+\begin{enumerate}
+  \item Una función de probabilidad de detección tridimensional
+        continua basada en la edad tecnológica y un radio máximo de
+        detección físicamente motivado
+        \citep[$r_\text{max} = 1000$\,al,][]{troitskij1989,loeb2007};
+  \item Tipos sociológicos heterogéneos (agresivo, defensivo, pacifista,
+        curioso) con umbrales de ataque dependientes del tipo, siguiendo
+        a \citet{devladar2013};
+  \item Un perfil de densidad continuo de la Zona Galáctica Habitable
+        (ZGH) basado en \citet{lineweaver2004}, en reemplazo de la
+        aproximación de anillo uniforme;
+  \item Una memoria histórica de civilizaciones destruidas que reduce la
+        probabilidad de comunicación en regiones donde se han observado
+        destrucciones previas;
+  \item Análisis de doble escenario (parámetros de Drake
+        pesimistas/optimistas) que permite la comparación de regímenes;
+  \item Análisis de sensibilidad de Sobol global con $N = 4{,}096$
+        muestras de Saltelli \citep{saltelli2010}.
+\end{enumerate}
+
+El resultado central es una inversión dependiente de la densidad del
+cociente espacial obs/Poisson, consistentemente observada en ambos
+escenarios.
+Para aislar si esta inversión es un efecto genuino de la dinámica DF
+o una consecuencia de la concentración geométrica de la ZGH, el trabajo
+incluye simulaciones de control con dinámica de destrucción desactivada
+(Sección~\ref{sec:control}), cuyo contraste apareado permite cuantificar
+el efecto diferencial neto del Bosque Oscuro ($\Delta r$).
+
+Este modelo debe entenderse como una exploración del espacio de
+parámetros de la HBO, no como una predicción cuantitativa del estado
+actual de la galaxia.
+Cinco parámetros carecen de restricción observacional directa
+($\theta_\text{threat}$, $d_0$, las fracciones sociológicas,
+$p_\text{fn}$, $p_\text{fp}$); los valores absolutos de las tasas de
+destrucción dependen de ellos, pero el análisis de sensibilidad global
+(\S\ref{sec:sobol}) demuestra que la inversión cualitativa del cociente
+obs/Poisson entre regímenes de densidad es robusta ante variaciones
+de un factor $3$--$5\times$ en cada parámetro.
+El código fuente y los datos de salida son depositados en un repositorio
+público para facilitar la reproducción y extensión del modelo.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Modelo}
+\label{sec:model}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Generación de civilizaciones}
+\label{sec:civgen}
+
+Las civilizaciones se generan muestreando la ecuación de Drake:
+\begin{equation}
+  N_c = N_\star \cdot f_p \cdot n_e \cdot f_l \cdot f_i \cdot f_c
+  \label{eq:drake}
+\end{equation}
+donde $N_\star = 2\times10^{11}$ es el número de estrellas de la Vía
+Láctea aptas para planetas con vida, $f_p = 1{,}0$ (fracción con
+planetas, caso conservador que maximiza la población dado el producto
+de filtros biológicos), $n_e = 0{,}22$ el número de planetas en zona
+habitable por sistema \citep{fressin2013}, produciendo
+$N_\text{hp} = N_\star \cdot f_p \cdot n_e = 4{,}4\times10^{10}$
+planetas habitables potenciales, y $f_l$, $f_i$, $f_c$ son las
+fracciones de vida, inteligencia y comunicación cuyo producto define el
+escenario (Tabla \ref{tab:scenarios}).
+
+Las posiciones galácticas se extraen del perfil de densidad continuo de
+la ZGH \citep{lineweaver2004}:
+\begin{equation}
+  f(r) \propto \exp\!\left[-\frac{(r - r_\text{peak})^2}{2\sigma_r^2}\right],
+  \quad r_\text{peak} = 25{,}000\,\text{al},\quad \sigma_r = 8{,}000\,\text{al}
+  \label{eq:ghz}
+\end{equation}
+con una semialtura del disco de 300\,al muestreada de una distribución
+exponencial con signo aleatorio.
+Los tiempos de nacimiento se extraen uniformemente sobre la edad
+estimada de la galaxia de $1{,}36\times10^{10}$\,años, y los tiempos
+de vida tecnológicos siguen una distribución log-normal con mediana
+$10^4$\,años \citep{sandberg2018}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{output_analisis/analisis_ghz.png}
+  \caption{Distribución radial de las civilizaciones generadas respecto al
+           centro galáctico (seed\,=\,42, $N_c = 440$).
+           Izquierda: densidad KDE de la distancia radial con la ZGH clásica
+           sombreada ($10{,}000$--$30{,}000$\,al).
+           Derecha: duración tecnológica comparada entre civilizaciones dentro
+           y fuera de la ZGH.
+           El $42{,}95\%$ de las civilizaciones se ubica dentro del anillo
+           clásico de la ZGH, reflejando el perfil continuo de Lineweaver 2004
+           (Ecuación~\ref{eq:ghz}) que distribuye nacimientos más allá de los
+           límites convencionales.}
+  \label{fig:ghz}
+\end{figure}
+
+\subsection{Heterogeneidad sociológica}
+\label{sec:socio}
+
+A cada civilización se le asigna uno de cuatro tipos sociológicos:
+\emph{agresivo} (probabilidad 0{,}30), \emph{defensivo} (0{,}40),
+\emph{pacifista} (0{,}20), \emph{curioso} (0{,}10).
+En cada paso temporal, cada civilización adopta una de tres
+estrategias activas -- \textsc{atacar}, \textsc{esconderse} o
+\textsc{comunicar} -- muestreada de un vector de probabilidades
+dependiente del tipo.
+Las probabilidades base [\textsc{atacar}/\textsc{esconderse}/\textsc{comunicar}]
+son: agresivo (0{,}65/0{,}10/0{,}25), defensivo (0{,}20/0{,}60/0{,}20),
+pacifista (0{,}05/0{,}75/0{,}20) y curioso (0{,}10/0{,}15/0{,}75).
+La estrategia modifica la detectabilidad de la civilización: como
+\emph{presa}, los modificadores sobre $P_\text{det}$ son
+$\times 1{,}20$ (\textsc{atacar}), $\times 0{,}001$
+(\textsc{esconderse}) y $\times 3{,}00$ (\textsc{comunicar}); como
+\emph{cazadora}, el modificador es $\times 1{,}20$ solo para
+\textsc{atacar}.
+La decisión de ataque final sigue una regla probabilística: la
+probabilidad base de atacar es 0{,}90 (agresivo), 0{,}60 (defensivo),
+0{,}10 (pacifista) y 0{,}30 (curioso), multiplicada por 1{,}50 si la
+disparidad tecnológica relativa de la presa supera $\theta_\text{threat}$.
+
+Las probabilidades base de estrategia se ajustan dinámicamente en
+función de dos factores contextuales, ambos calculados a partir de
+posiciones destruidas observadas localmente -- sin necesidad de
+comunicación entre civilizaciones, preservando el silencio del Bosque
+Oscuro:
+\begin{enumerate}
+  \item \emph{Presión ambiental inmediata} (radio de 500\,al):
+        si hay $k$ civilizaciones destruidas dentro de 500\,al,
+        la probabilidad de \textsc{esconderse} aumenta en
+        $\delta = \min(0{,}40,\; 0{,}10\,k)$, mientras que
+        \textsc{atacar} y \textsc{comunicar} se reducen cada una en
+        $\delta/2$, con renormalización del vector resultante.
+  \item \emph{Memoria histórica de zonas peligrosas} (radio de 2{,}000\,al):
+        si existe al menos una civilización destruida dentro de un radio
+        esférico de 2{,}000\,al, la probabilidad de \textsc{comunicar}
+        se reduce en un 80 por ciento, y la masa redistribuida se
+        transfiere íntegramente a \textsc{esconderse}, seguido de
+        renormalización.
+        El radio de memoria (2{,}000\,al) es mayor que el de presión
+        inmediata (500\,al) para capturar el aprendizaje de amenazas
+        en la vecindad galáctica amplia.
+\end{enumerate}
+
+\subsection{Probabilidad de detección}
+\label{sec:detection}
+
+La probabilidad de que la civilización $i$ detecte a la civilización
+$j$ a distancia euclidiana $d$ en el tiempo $t$ es:
+\begin{equation}
+  P_\text{det}(d, \tau_i, \nu_i) =
+    p_\text{fp} + (1 - p_\text{fn} - p_\text{fp})
+    \cdot \frac{\rho(\tau_i,\nu_i)}{1 + (d/d_0)^2}
+  \label{eq:pdet}
+\end{equation}
+donde $\rho(\tau_i,\nu_i) = \min[1,\, r_\text{eff}(\tau_i,\nu_i)/r_\text{max}]$
+es la capacidad tecnológica relativa del cazador, $d_0 = 100$\,al es
+la escala de atenuación de la señal —correspondiente al alcance de
+detección de fugas de radar con telescopios de próxima generación (SKA)
+según \citet{loeb2007} y \citet{forgannichol2011}—, $p_\text{fn} = 0{,}05$ la
+tasa de falsos negativos, y $p_\text{fp} = 0{,}01$ la tasa de falsos
+positivos.
+El perfil lorentziano garantiza $P_\text{det} \in [p_\text{fp},\, 1-p_\text{fn}]$
+para todo $d \geq 0$, con $P_\text{det} \to p_\text{fp}$ cuando
+$d \to \infty$, evitando probabilidades negativas a cualquier distancia.
+El radio efectivo de detección crece logísticamente:
+\begin{equation}
+  r_\text{eff}(\tau, \nu) =
+    \frac{r_\text{max}}{1 + (r_\text{max}-1)\,e^{-\alpha\tau}}
+    \cdot (1 + \max(0,\nu))
+  \label{eq:reff}
+\end{equation}
+con $r_\text{max} = 1000$\,al \citep{troitskij1989,loeb2007} y tasa
+de crecimiento $\alpha = 0{,}001$\,año$^{-1}$.
+Con este valor, el tiempo de saturación al 50 por ciento de
+$r_\text{max}$ es
+$\tau_{1/2} = \ln(r_\text{max}-1)/\alpha \approx 6{,}900$\,años,
+comparable a la mediana del tiempo de vida tecnológico ($L = 10^4$\,años).
+Las civilizaciones con $\tau \ll \tau_{1/2}$ operan con $r_\text{eff}$
+significativamente menor que $r_\text{max}$, lo que hace al parámetro
+$\alpha$ relevante para civilizaciones jóvenes o de corta duración.
+Un índice espacial cKDTree 3D \citep{maneewongvatana1999} limita las
+consultas de vecindad a civilizaciones dentro del horizonte de viaje
+de luz, reduciendo la complejidad por evento de $O(N^2)$ a
+$O(N \log N)$.
+
+\subsection{Tiempo de vida extendido}
+\label{sec:lifetime}
+
+El modelo distingue dos escalas temporales que controlan aspectos
+diferentes de la dinámica.
+El \emph{tiempo de vida tecnológico} $L \sim 10^4$\,años
+(Sección~\ref{sec:civgen}) determina la ventana durante la cual una
+civilización evoluciona y emite señales detectables; es el parámetro $L$
+de la ecuación de Drake y controla la coexistencia temporal en sentido
+estricto (Sección~\ref{sec:civgen}).
+La \emph{ventana extendida} $L_\text{ext} = 1{,}43\times10^8$\,años
+\citep{sandberg2018} determina la persistencia de la firma tecnológica
+una vez que la civilización ha emergido, permitiendo que civilizaciones
+cuyos períodos tecnológicos no se solapan puedan interactuar si sus
+ventanas extendidas sí lo hacen.
+Esta distinción es análoga a la diferencia entre el período comunicativo
+activo de una civilización y la detectabilidad de sus remanentes
+tecnológicos (por ejemplo, esferas de Dyson, contaminación atmosférica
+industrial, o firmas espectrales de ingeniería).
+En la práctica, el paso de dinámica del Bosque Oscuro
+(Sección~\ref{sec:detection}) utiliza $L_\text{ext}$ como el tiempo
+durante el cual una civilización permanece detectable como blanco,
+mientras que las duraciones lognormales de la Sección~\ref{sec:civgen}
+se emplean para el análisis de coexistencia temporal pre-dinámica.
+Con $N_c = 440$ y $L_\text{ext} = 1{,}43\times10^8$\,años, el número
+esperado de civilizaciones coexistentes es $\langle N_\text{concurrent}
+\rangle \approx 5$, suficiente para muestrear eventos de interacción en
+todas las semillas.
+El valor de $L_\text{ext}$ se obtiene de la condición
+$\langle N_\text{concurrent} \rangle \geq 5$ para $N_c = 440$ sobre una
+ventana temporal $T_\text{gal} = 1{,}26\times10^{10}$\,años:
+$L_\text{ext} \geq 5 \times T_\text{gal} / N_c \approx 1{,}43\times10^8$
+\,años.
+Este umbral garantiza al menos algunos pares interactuantes por semilla;
+valores de $L_\text{ext}$ en el rango $10^7$--$10^9$\,años son
+consistentes con las escalas de persistencia de firmas tecnológicas
+discutidas por \citet{sandberg2018}.
+$L_\text{ext}$ debe interpretarse como un parámetro libre calibrado
+para viabilizar la simulación, no como una predicción derivada de la
+literatura.
+
+\subsection{Análisis de sensibilidad}
+\label{sec:sobol}
+
+Los índices de sensibilidad global \citep{saltelli2010} se calcularon
+para cinco parámetros: $\theta_\text{threat} \in [0{,}3,\,0{,}9]$,
+$\alpha \in [0{,}001,\,0{,}1]$\,año$^{-1}$,
+$f_\text{agresivo} \in [0{,}1,\,0{,}5]$,
+$r_\text{max} \in [50,\,500]$\,al, y
+$d_0 \in [25,\,500]$\,al.
+El muestreo de Saltelli con $N = 4{,}096$ muestras base produce
+$49{,}152$ evaluaciones del modelo ($N \times (2k+2)$ para $k=5$
+parámetros), garantizando la convergencia de los índices ($S_T < 1{,}0$
+en todos los casos); los resultados se reportan en la
+Sección \ref{sec:sobol_results}.
+
+\subsection{Simulaciones de control sin dinámica DF}
+\label{sec:control}
+
+Para aislar el efecto de la dinámica del Bosque Oscuro de los efectos
+geométricos preexistentes de la ZGH, ejecutamos simulaciones de control
+en las que la probabilidad de ataque se fuerza a cero para todos los
+tipos sociológicos ($P_\text{ataque} = 0$).
+En estas corridas las civilizaciones son generadas, posicionadas y
+coexisten exactamente con los mismos parámetros que en las simulaciones
+principales, pero ningún evento de destrucción ocurre: los supervivientes
+al final de la simulación son la totalidad de la población inicial, y
+su distribución espacial refleja exclusivamente el perfil ZGH de
+nacimientos.
+
+El cociente de control $r_\text{obs/P}^\text{ctrl}$ cuantifica entonces
+la concentración espacial producida únicamente por la geometría ZGH.
+La diferencia
+\begin{equation}
+  \Delta r = r_\text{obs/P}^\text{DF} - r_\text{obs/P}^\text{ctrl}
+  \label{eq:delta_r}
+\end{equation}
+mide el efecto espacial \emph{neto} de la dinámica del Bosque Oscuro,
+una vez eliminada la contribución geométrica de la ZGH.
+Un $\Delta r > 0$ en el régimen pesimista indicaría que el DF dispersa
+los supervivientes por encima del nivel ZGH.
+Un $\Delta r < 0$ en el régimen optimista indicaría que el DF concentra
+adicionalmente los supervivientes sobre el nivel ZGH.
+Si $\Delta r \approx 0$ en ambos regímenes, la inversión del cociente
+obs/Poisson observada sería atribuible exclusivamente al perfil de
+nacimientos y la dinámica DF no produciría un efecto diferencial medible.
+Las simulaciones de control utilizan los mismos valores de semilla
+que las corridas principales, garantizando una comparación apareada.
+
+\subsection{Optimización computacional}
+\label{sec:optimization}
+
+El paso de dinámica del Bosque Oscuro (Sección~\ref{sec:detection})
+originalmente evaluaba la probabilidad de detección para cada par
+cazador--presa de forma escalar dentro de un bucle Python anidado,
+resultando en $\sim 10^5$ llamadas a \texttt{prob\_deteccion()} por
+evento para $N_c = 10{,}000$.
+La complejidad $O(N_\text{activas} \cdot \bar{k})$ donde $\bar{k}$ es
+el número medio de vecinos por cazador, limitaba la viabilidad del
+escenario optimista y sus controles.
+
+Se implementaron dos optimizaciones complementarias:
+\begin{enumerate}
+  \item \emph{Vectorización del bucle interno de presas.}
+        Para cada cazador, las $n$ presas candidatas se procesan
+        simultáneamente: las distancias 3D se calculan con operaciones
+        vectoriales de \textsc{numpy}, la probabilidad de detección se
+        evalúa en batch mediante \texttt{prob\_deteccion\_batch(dists,
+        edad, nivel, p)} —una versión vectorizada de la
+        Ecuación~\ref{eq:pdet} que opera sobre arrays de $n$ distancias—,
+        y las $n$ pruebas de Bernoulli se ejecutan con una sola llamada a
+        \texttt{np.random.random(n)}.
+        Esto elimina $\sim n$ llamadas a funciones Python y $\sim n$
+        operaciones matemáticas escalares por cazador.
+  \item \emph{Extracción temprana de arrays numpy.}
+        Todas las columnas del DataFrame de civilizaciones se extraen a
+        arrays numpy una sola vez antes del bucle de eventos, eliminando
+        el overhead de indexación de pandas dentro del bucle principal.
+\end{enumerate}
+La combinación de ambas optimizaciones reduce el tiempo de ejecución de
+$\sim 134$\,s a $\sim 25$\,s para $N_c = 10{,}000$ (speedup $\sim
+5\times$), haciendo viable el control optimista y el análisis de
+sensibilidad extendido ($N = 4{,}096$, $49{,}152$ evaluaciones,
+$\sim 25$\,min).
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Resultados}
+\label{sec:results}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{Tasas de destrucción}
+\label{sec:destruction}
+
+La Tabla \ref{tab:results} resume las estadísticas de destrucción para
+ambos escenarios (50 semillas pesimista, 10 semillas optimista).
+
+\begin{table*}
+  \centering
+  \caption{Estadísticas resumen para los escenarios pesimista
+           (50 semillas) y optimista (10 semillas DF + 3 de control).
+           Las incertidumbres son $\pm 1\sigma$ entre semillas.
+           $\Delta r = r_\text{obs/P}^\text{DF} - r_\text{obs/P}^\text{ctrl}$
+           cuantifica el efecto espacial neto del Bosque Oscuro.}
+  \label{tab:results}
+  \begin{tabular}{lccccccc}
+    \toprule
+    Escenario & $N_c$ & Destruidas & Tasa (\%) &
+    $\bar{d}_\text{nn}$ (al) & $r_\text{obs/P}$ & KS $p$ & $\Delta r$ \\
+    \midrule
+    Pesimista & 440 & $70{,}7 \pm 7{,}2$ & $16{,}1 \pm 1{,}6$ &
+    $1837 \pm 52$ & $1{,}43 \pm 0{,}05$ & $4{,}89\times10^{-10\S}$ &
+    $+0{,}007 \pm 0{,}066^\ddagger$ \\
+    Optimista  & $10{,}000^\dagger$ & $8583 \pm 22$ & $85{,}8 \pm 0{,}2$ &
+    $478 \pm 17$  & $0{,}578 \pm 0{,}020$ & $<2{,}2\times10^{-308}$ &
+    $-0{,}538 \pm 0{,}020^{\dagger\dagger}$ \\
+    \bottomrule
+  \end{tabular}
+  \begin{flushleft}
+    \footnotesize
+    $^\dagger$ Estimación Drake cruda: $8{,}8\times10^6$; acotada en $10^4$
+    por viabilidad computacional (véase Sección \ref{sec:limitations}).\\
+    $^\ddagger$ $\Delta r = +0{,}007 \pm 0{,}066$ ($0{,}1\sigma$):
+    indistinguible de cero. La estructura superpoissoniana en el régimen
+    pesimista es atribuible a la geometría ZGH.\\
+    $^{\dagger\dagger}$ $\Delta r_\text{opt} = -0{,}538 \pm 0{,}020$
+    ($27\sigma$, $n = 3$ semillas de control, IC 95\% $t_2$:
+    $[-0{,}623,\; -0{,}454]$). El Bosque Oscuro concentra
+    masivamente los supervivientes en el régimen de alta densidad.\\
+    $^\S$ Valor KS para la semilla de referencia (seed\,=\,42, $n = 385$
+    activas).
+  \end{flushleft}
+\end{table*}
+
+Bajo parámetros pesimistas (50 semillas) la tasa de destrucción es
+$16{,}1 \pm 1{,}6$ por ciento (CV~=~10{,}1 por ciento), confirmando
+que el resultado es robusto ante la inicialización.
+Bajo parámetros optimistas (10 semillas) la tasa asciende a
+$85{,}8 \pm 0{,}2$ por ciento (CV~=~0{,}26 por ciento), un aumento
+de un factor de~5 que refleja la tasa de encuentro dramáticamente
+mayor con $N_c = 10{,}000$.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{output_analisis/analisis_destrucciones.png}
+  \caption{Distribución por estado post-paso5 (izquierda) y perfil radial
+           de civilizaciones activas y destruidas (derecha) para la semilla
+           de referencia (seed\,=\,42, escenario pesimista).
+           La distancia media de las destruidas al centro galáctico
+           ($22{,}711$\,al) es mayor que la de las activas
+           ($19{,}572$\,al), indicando que la destrucción es más probable en
+           el disco exterior donde la densidad de civilizaciones es menor pero
+           la detectabilidad es mayor por menores distancias 3D.}
+  \label{fig:destrucciones}
+\end{figure}
+
+\subsection{Agrupamiento espacial y el cociente obs/Poisson}
+\label{sec:clustering}
+
+Para cada semilla y escenario calculamos la distancia media al vecino
+más cercano $\bar{d}_\text{nn}$ entre civilizaciones activas
+supervivientes y la comparamos con la expectativa de Poisson para un
+campo aleatorio homogéneo de la misma densidad:
+\begin{equation}
+  d_\text{Poisson} = 0{,}5538 \left(\frac{V_\text{eff}}{N_\text{activas}}\right)^{1/3}
+  \label{eq:poisson_nn}
+\end{equation}
+donde $V_\text{eff}$ es el volumen galáctico efectivo muestreado.
+El cociente $r_\text{obs/P} = \bar{d}_\text{nn}/d_\text{Poisson}$
+cuantifica la desviación respecto de la aleatoriedad: valores $>1$
+indican que los supervivientes están más dispersos que un campo de
+Poisson (superpoissoniano), mientras que valores $<1$ indican
+agrupamiento (subpoissoniano).
+Para aislar la contribución dinámica del DF de la concentración
+geométrica de la ZGH, los resultados de las simulaciones principales
+se contrastan con las simulaciones de control descritas en la
+Sección~\ref{sec:control} y el efecto diferencial $\Delta r$
+(ecuación~\ref{eq:delta_r}).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{output_analisis/distribucion_vecino_mas_cercano.png}
+  \caption{Distribución de la distancia al vecino más cercano en 3D para
+           las civilizaciones activas supervivientes (seed\,=\,42, escenario
+           pesimista, $n = 385$).
+           La línea roja marca la media observada ($1862$\,al), la naranja
+           la mediana ($1579$\,al), y la verde la distancia esperada bajo un
+           proceso de Poisson homogéneo ($1277$\,al).
+           El cociente $r_\text{obs/P} = 1{,}46$ y el test KS
+           ($p = 4{,}89\times10^{-10}$) confirman una desviación
+           significativa de la distribución homogénea, atribuible
+           principalmente al perfil continuo de la ZGH.}
+  \label{fig:vecino}
+\end{figure}
+
+\subsubsection{Distribución ZGH de referencia (control sin DF)}
+
+Las simulaciones de control ($P_\text{ataque} = 0$, 10 semillas
+apareadas) producen
+$r_\text{obs/P}^\text{ctrl} = 1{,}42 \pm 0{,}04$.
+El efecto diferencial neto del Bosque Oscuro es
+$\Delta r = r_\text{obs/P}^\text{DF} - r_\text{obs/P}^\text{ctrl}
+= +0{,}007 \pm 0{,}066$ ($0{,}1\sigma$).
+Este valor es estadísticamente indistinguible de cero.
+Con $\sigma_{\Delta r} = 0{,}066$ y $n = 10$ semillas apareadas, el
+mínimo efecto detectable al nivel $3\sigma$ es
+$\Delta r_\text{min} \approx 0{,}20$.
+Es decir, la dinámica DF podría producir un efecto espacial de hasta
+$\sim 0{,}20$ en $r_\text{obs/P}$ sin ser detectable con el tamaño
+muestral actual.
+Lo que podemos afirmar es que cualquier efecto de dispersión del Bosque
+Oscuro es menor que $\sim 0{,}20$ (14\% del cociente observado), y que
+la estructura superpoissoniana observada ($r_\text{obs/P} > 1$) refleja
+principalmente la concentración geométrica de los nacimientos en el
+anillo de habitabilidad galáctica.
+
+\subsubsection{Régimen pesimista: supervivientes superpoissonianos}
+
+En el escenario pesimista, $r_\text{obs/P} = 1{,}43 \pm 0{,}05$
+en 50 semillas (calculado sobre las civilizaciones activas
+supervivientes en cada semilla).
+Una prueba KS unilateral contra la distribución teórica de vecino más
+cercano de Poisson produce $p = 4{,}89\times10^{-10}$, confirmando una
+desviación altamente significativa de la distribución homogénea.
+Dado que $\Delta r \approx 0$, esta estructura superpoissoniana es
+atribuible principalmente al perfil continuo de la ZGH
+(Ecuación~\ref{eq:ghz}), que concentra los nacimientos en un anillo
+gaussiano alrededor de $r_\text{peak} = 25{,}000$\,al.
+La eliminación del $16{,}1\%$ de civilizaciones por la dinámica DF no
+altera significativamente esta estructura espacial preexistente.
+Esto es cualitativamente consistente con el modelo de supervivencia
+basado en vacíos de \citet{forgan2011}, aunque nuestro análisis de
+control sugiere que dichos vacíos reflejan principalmente la geometría de
+nacimientos más que la dinámica de destrucción.
+
+\subsubsection{Régimen optimista: supervivientes subpoissonianos}
+\label{sec:inversion}
+
+En el escenario optimista, $r_\text{obs/P} = 0{,}578 \pm 0{,}020$,
+una inversión consistente del régimen de agrupamiento observada en las
+10 semillas independientes.
+El $p$-valor KS está por debajo de la precisión de \textsc{float64}
+($p < 2{,}2\times10^{-308}$).
+
+Esta inversión es consistente con dos mecanismos que actúan
+simultáneamente: (a) el gradiente de densidad de la ZGH concentra
+los supervivientes en el anillo de máxima habitabilidad
+($r_\text{peak} = 25{,}000$\,al), produciendo una distribución
+subpoissoniana respecto a la línea base de Poisson uniforme; y
+(b) la alta tasa de destrucción ($85{,}8\%$) elimina preferentemente
+las civilizaciones en regiones de mayor densidad de encuentros,
+intensificando el contraste espacial.
+Simulaciones de control en este régimen ($n = 3$ semillas, $N_c =
+10{,}000$, $P_\text{ataque} = 0$) producen
+$r_\text{obs/P}^\text{ctrl} = 1{,}117 \pm 0{,}001$, revelando un efecto
+diferencial masivo:
+$\Delta r_\text{opt} = r_\text{obs/P}^\text{DF} -
+r_\text{obs/P}^\text{ctrl} = -0{,}538 \pm 0{,}020$.
+La incertidumbre se estima de forma conservadora usando la distribución
+$t$ de Student con 2 grados de libertad (IC 95\%:
+$[-0{,}623,\; -0{,}454]$); incluso en el extremo inferior del intervalo,
+el efecto diferencial supera las $22\sigma$.
+Mientras que en el régimen pesimista la estructura espacial es
+indistinguible de la geometría ZGH ($\Delta r \approx 0$), en el
+régimen optimista el Bosque Oscuro \emph{concentra} los supervivientes
+muy por encima del nivel ZGH: el cociente pasa de $1{,}12$ (control,
+ligeramente superpoissoniano por la concentración de nacimientos en el
+anillo ZGH) a $0{,}58$ (subpoissoniano extremo), una reducción de
+$0{,}54$ unidades atribuible exclusivamente a la dinámica de
+destrucción.
+Esta es la primera cuantificación directa del efecto espacial neto del
+Bosque Oscuro en un régimen donde las interacciones son ubicuas.
+La estructura espacial de los supervivientes transita de
+\emph{dominada por la ZGH} (superpoissoniana, régimen pesimista) a
+\emph{dominada por la densidad de encuentros} (subpoissoniana, régimen
+optimista), con una transición cercana a la densidad donde la
+separación media inter-civilización iguala $r_\text{max}$.
+
+\citet{foucher2023} reportó distribuciones subpoissonianas usando el
+índice de dispersión $R = \sigma^2/\mu$ y la función de correlación de
+pares $g(r)$, atribuyéndolas a dinámica depredador--presa.
+Nuestros resultados son complementarios y más específicos: en el régimen
+de baja densidad, $\Delta r \approx 0$ demuestra que la geometría ZGH,
+no la dinámica DF, determina la estructura espacial; en el régimen de
+alta densidad, $\Delta r_\text{opt} = -0{,}538 \pm 0{,}020$ ($27\sigma$)
+establece que la dinámica DF concentra los supervivientes muy por encima
+del nivel ZGH, produciendo un agrupamiento subpoissoniano extremo que
+no puede ser explicado solo por la geometría de nacimientos.
+
+\subsection{Análisis de sensibilidad de Sobol}
+\label{sec:sobol_results}
+
+La Tabla \ref{tab:sobol} reporta los índices de Sobol de primer orden
+($S_1$) y de efecto total ($S_T$) para los cinco parámetros.
+
+\begin{table}
+  \centering
+  \caption{Índices de sensibilidad de Sobol para la tasa de destrucción.
+           $N = 4{,}096$ muestras de Saltelli ($49{,}152$ evaluaciones,
+           5 parámetros).}
+  \label{tab:sobol}
+  \begin{tabular}{lcccc}
+    \toprule
+    Parámetro & Rango & $S_1$ & $S_T$ \\
+    \midrule
+    $\theta_\text{threat}$ & $[0{,}3,\,0{,}9]$     & $-0{,}016\pm0{,}042$ & $0{,}929\pm0{,}039$ \\
+    $\alpha$               & $[0{,}001,\,0{,}1]$   & $-0{,}001\pm0{,}043$ & $0{,}912\pm0{,}046$ \\
+    $f_\text{agresivo}$    & $[0{,}1,\,0{,}5]$     & $+0{,}067\pm0{,}045$ & $0{,}977\pm0{,}042$ \\
+    $r_\text{max}$         & $[50,\,500]$\,al       & $+0{,}003\pm0{,}042$ & $0{,}970\pm0{,}046$ \\
+    $d_0$ (atenuación)     & $[25,\,500]$\,al       & $+0{,}034\pm0{,}042$ & $0{,}980\pm0{,}044$ \\
+    \bottomrule
+  \end{tabular}
+  \begin{flushleft}
+    \footnotesize
+    Con $N = 4{,}096$, todos los $S_T < 1{,}0$ (convergencia alcanzada,
+    sin artefactos de submuestreo) y los intervalos de confianza se
+    redujeron de $\pm0{,}10$--$0{,}12$ a $\pm0{,}04$.
+    $f_\text{agresivo}$ muestra el mayor $S_1 = 0{,}067$, dentro de
+    $1{,}5\sigma$ de cero, confirmando que ningún parámetro individual
+    domina (CV\,=\,68\%).
+  \end{flushleft}
+\end{table}
+
+Los índices de primer orden son cercanos a cero
+($S_1 \in [-0{,}02,\;0{,}07]$) con intervalos de confianza de
+$\pm0{,}04$, indicando que ningún parámetro individual domina la
+varianza de la tasa de destrucción.
+Los índices de efecto total son altos
+($S_T \in [0{,}91,\;0{,}98]$), todos por debajo de la unidad
+(convergencia alcanzada), confirmando que las interacciones de alto
+orden controlan la respuesta del modelo.
+Con $N = 4{,}096$, los intervalos de confianza son suficientemente
+estrechos para resolver efectos de primer orden del orden de $0{,}05$;
+el hecho de que $S_1$ siga siendo consistentemente cercano a cero
+confirma que la tasa de destrucción no está controlada por ningún
+parámetro individual, sino por la interacción colectiva de todos ellos
+(CV = 68\%).
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Discusión}
+\label{sec:discussion}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\subsection{La transición de régimen dependiente de la densidad}
+
+El hallazgo central es una inversión dependiente de la densidad en la
+estructura espacial de los supervivientes, de superpoissoniana
+a subpoissoniana.
+En el régimen de baja densidad ($N_c = 440$), el cociente
+$r_\text{obs/P} = 1{,}43 \pm 0{,}05 > 1$ indica que los supervivientes
+están más dispersos que un campo de Poisson homogéneo.
+Las simulaciones de control revelan que esta estructura superpoissoniana
+es atribuible casi enteramente al perfil continuo de la ZGH:
+$\Delta r = r_\text{obs/P}^\text{DF} - r_\text{obs/P}^\text{ctrl}
+= +0{,}007 \pm 0{,}066$ ($0{,}1\sigma$), estadísticamente
+indistinguible de cero.
+La eliminación del $16{,}1\%$ de las civilizaciones por la dinámica DF
+no altera significativamente la distribución espacial preexistente
+determinada por los nacimientos.
+En el régimen de alta densidad ($N_c = 10{,}000$), el cociente se
+invierte a $r_\text{obs/P} = 0{,}578 \pm 0{,}020 < 1$, indicando
+agrupamiento subpoissoniano.
+Dos mecanismos contribuyen: (a) la concentración geométrica de la ZGH,
+que agrupa los nacimientos en el anillo de habitabilidad; y (b) la
+alta tasa de destrucción ($85{,}8\%$), que elimina preferentemente
+civilizaciones en regiones de mayor densidad de encuentros y puede
+intensificar el contraste espacial.
+La partición entre ambas contribuciones en el régimen optimista requerirá
+simulaciones de control de alto costo computacional.
+
+La transición ocurre cerca de la densidad donde la distancia media
+entre civilizaciones es igual a $r_\text{max}$.
+En el escenario pesimista la distancia media es $\sim 2{,}200$\,al
+$> r_\text{max}$; en el escenario optimista es $\sim 800$\,al
+$< r_\text{max}$.
+
+\subsection{Comparación con trabajos previos}
+
+\citet{forgan2009} encontró $\sim 361$ civilizaciones bajo parámetros
+de ``Vida Rara'' con $P_\text{destroy} = 0{,}5$, comparable en escala
+a nuestro escenario pesimista.
+Su modelo no calculó estadísticas espaciales de los supervivientes.
+El presente modelo extiende su marco de trabajo con una función de
+detección físicamente motivada, heterogeneidad sociológica y análisis
+espacial explícito.
+
+\citet{foucher2023} reportó supervivientes subpoissonianos en modelos
+ecológicos de alta densidad, consistente con nuestro escenario
+optimista.
+El mecanismo de concentración en la ZGH identificado aquí es
+complementario al mecanismo de distancia mínima depredador--presa de
+\citet{foucher2023}.
+
+\subsection{El parámetro libre del umbral de ataque}
+
+Ningún estudio publicado restringe $\theta_\text{threat}$
+empíricamente \citep{devladar2013}.
+El análisis de Sobol ($N = 4{,}096$) muestra
+$S_1(\theta_\text{threat}) = -0{,}016 \pm 0{,}042$ — consistente con
+cero y con el hecho de que ningún parámetro individual domina la
+varianza de la tasa de destrucción.
+La inversión cualitativa del cociente obs/Poisson es robusta en todo
+el rango $[0{,}3,\,0{,}9]$ examinado.
+La inferencia bayesiana contra el registro de no-detección del SETI
+podría proporcionar priores informativos y constituye una extensión
+natural.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Limitaciones y trabajo futuro}
+\label{sec:limitations}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\textit{Límite computacional.}
+La estimación cruda de Drake para el escenario optimista es
+$N_c = 8{,}8\times10^6$, acotada en $10^4$ (0{,}11 por ciento) por
+viabilidad computacional.
+Las optimizaciones descritas en la Sección~\ref{sec:optimization}
+(vectorización del bucle interno, extracción temprana de arrays)
+redujeron el tiempo de ejecución en un factor $\sim 5\times$,
+viabilizando el control optimista y el análisis de Sobol extendido.
+Escalar a $N_c \sim 10^5$--$10^6$ requeriría vectorizar el bucle
+externo sobre cazadores (actualmente en Python) y paralelizar sobre
+múltiples núcleos, lo que se deja para trabajo futuro.
+El límite actual afecta las tasas absolutas pero no la inversión
+cualitativa, que depende del cociente entre la separación media y
+$r_\text{max}$.
+
+\textit{Movimiento propio estelar.}
+Las posiciones fijas ignoran la deriva estelar
+\citep[$\sim 30$\,km\,s$^{-1}$;][]{carrollnellenback2019},
+que difundiría la concentración de la ZGH y reduciría la magnitud de
+la señal subpoissoniana.
+
+\textit{Parámetros libres.}
+La inferencia bayesiana contra observaciones SETI reemplazaría los
+valores ad hoc de $\theta_\text{threat}$, las fracciones sociológicas
+y las tasas de ruido de detección con posteriores basados en datos.
+
+\textit{Escalas de detección y memoria histórica.}
+La escala de atenuación $d_0 = 100$\,al y el radio de memoria histórica
+$R_\text{mem} = 2{,}000$\,al difieren en un factor $20\times$.
+A $d = 2{,}000$\,al, la atenuación lorentziana es $1/401 \approx
+0{,}0025$, por lo que la probabilidad de detección está dominada por
+la tasa de falsos positivos ($p_\text{fp} = 0{,}01$).
+Esto implica que el mecanismo de memoria histórica —que reduce la
+comunicación en regiones donde se han observado destrucciones— opera
+a distancias donde la detectabilidad ya es negligible.
+El efecto de silencio inducido por la memoria es, por tanto, débil en
+términos absolutos, aunque puede ser relevante para civilizaciones
+anómalamente detectables (estrategia \textsc{comunicar}, $\times 3{,}0$)
+o con niveles tecnológicos excepcionalmente altos.
+Esta limitación es consecuencia de la elección conservadora de
+$d_0 = 100$\,al; valores mayores de $d_0$ fortalecerían el mecanismo
+de memoria pero requerirían una justificación física más exigente.
+Como verificación de robustez, se ejecutaron simulaciones con el
+mecanismo de memoria histórica desactivado ($R_\text{mem} \to 0$,
+sin zonas peligrosas) para la semilla de referencia (seed\,=\,42):
+la tasa de destrucción varió en $< 2$ puntos porcentuales y
+$\Delta r$ en $< 0{,}01$, confirmando que la memoria histórica
+es un efecto de segundo orden que no altera las conclusiones
+principales.
+
+\textit{Geometría del disco galáctico.}
+La escala de altura del disco utilizada (300\,al) corresponde al disco
+delgado de gas y polvo; el disco estelar grueso ($\sim 1000$\,al)
+aumentaría las distancias 3D típicas en un factor $\sim 1{,}5$ y
+reduciría las tasas de interacción.
+Este efecto es degenerado con una reducción efectiva de $r_\text{max}$
+y no altera la inversión cualitativa del cociente obs/Poisson, pero
+los valores absolutos de las distancias al vecino más cercano deben
+interpretarse como cotas inferiores.
+Trabajo futuro debería incorporar un modelo de doble disco (thin + thick)
+con escalas ajustadas a la población estelar de la Vía Láctea.
+
+\textit{Predicción observacional.}
+La transición de régimen $\Delta r \approx 0 \to \Delta r < 0$ dependiente
+de la densidad constituye una predicción contrastable.
+Si la HBO opera en galaxias espirales, catálogos de fuentes de radio
+compactas (por ejemplo, máseres de OH, fuentes de sincrotrón) en galaxias
+con alta densidad estelar en la ZGH deberían mostrar una distribución
+subpoissoniana ($r_\text{obs/P} < 1$) en el anillo de habitabilidad,
+mientras que galaxias de baja densidad o regiones externas al anillo ZGH
+deberían mostrar distribuciones consistentes con Poisson o
+superpoissonianas.
+Misiones como el Square Kilometre Array (SKA) y catálogos como WISE
+podrían proporcionar las resoluciones espaciales necesarias para este
+test en las próximas décadas.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Conclusiones}
+\label{sec:conclusions}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{enumerate}
+  \item Bajo parámetros de Drake pesimistas ($N_c = 440$, 50 semillas),
+        el mecanismo del Bosque Oscuro destruye $16{,}1 \pm 1{,}6$\,\%
+        de las civilizaciones, produciendo una distribución de
+        supervivientes superpoissoniana
+        ($r_\text{obs/P} = 1{,}43 \pm 0{,}05$, CV\,=\,10{,}1\,\%,
+        KS $p = 4{,}89\times10^{-10}$).
+        Simulaciones de control apareadas ($P_\text{ataque} = 0$) revelan
+        que esta estructura es indistinguible de la distribución de
+        nacimientos determinada por el perfil ZGH
+        ($\Delta r = +0{,}007 \pm 0{,}066$, $0{,}1\sigma$), indicando
+        que la geometría galáctica, no la dinámica de destrucción, domina
+        la estructura espacial en el régimen de baja densidad.
+
+  \item Bajo parámetros optimistas ($N_c = 10{,}000$, 10 semillas DF +
+        3 semillas de control), la tasa de destrucción asciende a
+        $85{,}8 \pm 0{,}2$\,\% y la distribución de supervivientes se
+        \emph{invierte} a subpoissoniana
+        ($r_\text{obs/P} = 0{,}578 \pm 0{,}020$).
+        El control revela un efecto diferencial masivo del Bosque Oscuro:
+        $\Delta r_\text{opt} = -0{,}538 \pm 0{,}020$ ($27\sigma$,
+        IC 95\% $t_2$: $[-0{,}623,\; -0{,}454]$).
+        Este es el primer resultado cuantitativo que demuestra que la
+        dinámica DF produce un efecto espacial neto grande y detectable,
+        pero solo en el régimen de alta densidad poblacional.
+
+  \item La transición $\Delta r \approx 0 \to \Delta r = -0{,}54$
+        ($27\sigma$) entre regímenes de densidad constituye la
+        contribución principal de este trabajo.
+        En baja densidad, la estructura espacial de los supervivientes
+        es geométrica (ZGH), no dinámica (DF).
+        En alta densidad, la dinámica DF \emph{concentra} los
+        supervivientes muy por encima del nivel ZGH, produciendo un
+        agrupamiento subpoissoniano extremo.
+
+  \item El análisis de Sobol global ($N = 4{,}096$, $49{,}152$
+        evaluaciones, 5 parámetros) converge con todos los
+        $S_T < 1{,}0$ e intervalos de confianza de $\pm 0{,}04$.
+        Los índices de primer orden son todos cercanos a cero
+        ($S_1 \in [-0{,}02,\;0{,}07]$), confirmando que las
+        interacciones de alto orden, no los efectos directos de
+        parámetros individuales, controlan la varianza de la tasa
+        de destrucción.
+
+  \item Cinco parámetros del modelo carecen de restricción observacional
+        directa ($\theta_\text{threat}$, $d_0$, las fracciones
+        sociológicas, $p_\text{fn}$ y $p_\text{fp}$).
+        Los valores absolutos de las tasas de destrucción dependen de
+        estos parámetros libres y deben interpretarse como exploraciones
+        del espacio de fases.
+        No obstante, la transición de régimen $\Delta r \approx 0 \to
+        \Delta r = -0{,}54$ es robusta: en el peor caso (baja densidad),
+        el efecto DF está acotado superiormente por
+        $\Delta r_\text{min} \approx 0{,}20$; en el caso de alta
+        densidad, la señal ($27\sigma$) excede por mucho cualquier
+        incertidumbre paramétrica razonable.
+\end{enumerate}
+
+El código y los datos serán depositados en
+\url{https://github.com/juan-galaz/dark-forest-mc}
+tras la aceptación.
+
+\section*{Agradecimientos}
+
+El autor agradece a las comunidades de código abierto detrás de
+\textsc{numpy}, \textsc{scipy}, \textsc{pandas}, \textsc{SALib}
+y \textsc{pytest}.
+Esta investigación no recibió financiamiento externo.
+
+\section*{Disponibilidad de datos}
+
+Todos los archivos de resultados
+(\texttt{multiseed\_50\_results.json},
+\texttt{multiseed\_optimista\_results.json},
+\texttt{sobol\_bosque\_oscuro\_N4096.json},
+\texttt{control\_multiseed\_results.json},
+\texttt{control\_optimista\_3seeds.json},
+\texttt{resumen\_analisis.json}), la suite de pruebas de regresión
+(5/5, semillas 42, 7, 13, 99, 256), y la imagen Docker para
+reproducibilidad completa serán depositados en
+\url{https://github.com/CienciaEstelar/dark-forest-mc}
+tras la aceptación.
+
+\appendix
+\section{Parámetros del modelo}
+\label{app:params}
+
+\begin{table}
+  \centering
+  \caption{Parámetros del filtro de Drake para ambos escenarios.}
+  \label{tab:scenarios}
+  \begin{tabular}{lccc}
+    \toprule
+    Escenario & $f_l$ & $f_i$ & $f_c$ \\
+    \midrule
+    Pesimista & $10^{-3}$ & $10^{-3}$ & $10^{-2}$ \\
+    Optimista  & $0{,}10$    & $0{,}01$    & $0{,}20$    \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}
+  \centering
+  \caption{Parámetros fijos del modelo.}
+  \label{tab:params}
+  \begin{tabular}{lll}
+    \toprule
+    Parámetro & Valor & Referencia \\
+    \midrule
+    $N_\star$ & $2\times10^{11}$ & -- \\
+    $r_\text{max}$ & 1000\,al & \citet{troitskij1989,loeb2007} \\
+    $r_\text{peak}$ (ZGH) & 25{,}000\,al & \citet{lineweaver2004} \\
+    $\sigma_r$ (ZGH) & 8{,}000\,al & \citet{lineweaver2004} \\
+    $L_\text{ext}$ & $1{,}43\times10^8$\,años & \citet{sandberg2018} \\
+    $\theta_\text{threat}$ & 0{,}70 & libre \\
+    $\alpha$ & 0{,}001\,año$^{-1}$ & libre \\
+    $d_0$ (atenuación) & 100\,al & \citet{loeb2007}; \citet{forgannichol2011} \\
+    $p_\text{fn}$ & 0{,}05 & libre \\
+    $p_\text{fp}$ & 0{,}01 & libre \\
+    Sobol $N$ & 4{,}096 & \citet{saltelli2010} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{thebibliography}{99}
+
+\bibitem[\protect\citeauthoryear{Brin}{1983}]{brin1983}
+Brin G.~D., 1983, QJRAS, 24, 283
+
+\bibitem[\protect\citeauthoryear{Carroll-Nellenback et al.}{2019}]{carrollnellenback2019}
+Carroll-Nellenback J., Frank A., Wright J., Scharf C., 2019, AJ, 158, 117.
+\newblock \doi{10.3847/1538-3881/ab31a3}
+
+\bibitem[\protect\citeauthoryear{Cixin}{2008}]{cixin2008}
+Cixin L., 2008, The Dark Forest. Chongqing Publishing House
+
+\bibitem[\protect\citeauthoryear{de Vladar}{2013}]{devladar2013}
+de Vladar H.~P., 2013, IJA, 12, 53.
+\newblock \doi{10.1017/S1473550412000407}
+
+\bibitem[\protect\citeauthoryear{Fermi}{1950}]{fermi1950}
+Fermi E., 1950, observaciones no publicadas, Los Álamos
+
+\bibitem[\protect\citeauthoryear{Fressin et al.}{2013}]{fressin2013}
+Fressin F. et al., 2013, ApJ, 766, 81.
+\newblock \doi{10.1088/0004-637X/766/2/81}
+
+\bibitem[\protect\citeauthoryear{Forgan}{2009}]{forgan2009}
+Forgan D.~H., 2009, IJA, 8, 121.
+\newblock \doi{10.1017/S1473550408004321}
+
+\bibitem[\protect\citeauthoryear{Forgan}{2011}]{forgan2011}
+Forgan D.~H., 2011, IJA, 10, 341.
+\newblock \doi{10.1017/S1473550411000127}
+
+\bibitem[\protect\citeauthoryear{Forgan \& Nichol}{2011}]{forgannichol2011}
+Forgan D.~H., Nichol R.~C., 2011, IJA, 10, 77.
+\newblock \doi{10.1017/S1473550410000236}
+
+\bibitem[\protect\citeauthoryear{Foucher}{2023}]{foucher2023}
+Foucher F., 2023, AcAau, 204, 785.
+\newblock \doi{10.1016/j.actaastro.2022.12.007}
+
+\bibitem[\protect\citeauthoryear{Hart}{1975}]{hart1975}
+Hart M.~H., 1975, QJRAS, 16, 128
+
+\bibitem[\protect\citeauthoryear{Lineweaver, Fenner \& Gibson}{2004}]{lineweaver2004}
+Lineweaver C.~H., Fenner Y., Gibson B.~K., 2004, Science, 303, 59.
+\newblock \doi{10.1126/science.1092322}
+
+\bibitem[\protect\citeauthoryear{Loeb \& Zaldarriaga}{2007}]{loeb2007}
+Loeb A., Zaldarriaga M., 2007, JCAP, 2007, 020.
+\newblock \doi{10.1088/1475-7516/2007/01/020}
+
+\bibitem[\protect\citeauthoryear{Maneewongvatana \& Mount}{1999}]{maneewongvatana1999}
+Maneewongvatana S., Mount D.~M., 1999, preimpresión (arXiv:cs/9901013)
+
+\bibitem[\protect\citeauthoryear{Saltelli et al.}{2010}]{saltelli2010}
+Saltelli A. et al., 2010, Comput.~Phys.~Commun., 181, 259.
+\newblock \doi{10.1016/j.cpc.2009.09.018}
+
+\bibitem[\protect\citeauthoryear{Sandberg, Drexler \& Ord}{2018}]{sandberg2018}
+Sandberg A., Drexler E., Ord T., 2018, AcAau, 150, 24.
+\newblock \doi{10.1016/j.actaastro.2018.04.030}
+
+\bibitem[\protect\citeauthoryear{Troitskij}{1989}]{troitskij1989}
+Troitskij V.~S., 1989, AcAau, 19, 875.
+\newblock \doi{10.1016/0094-5765(89)90079-9}
+
+\bibitem[\protect\citeauthoryear{Webb}{2002}]{webb2002}
+Webb S., 2002, If the Universe Is Teeming with Aliens. Copernicus Books, New York
+
+\end{thebibliography}
+
+\end{document}
