@@ -1,0 +1,34 @@
+{
+  "creators": [
+    {
+      "orcid": "0009-0007-7474-7560",
+      "affiliation": "Investigador Independiente, Santiago, Chile",
+      "name": "Galaz, Juan"
+    }
+  ],
+  "license": "MIT",
+  "title": "Del Silencio a la Concentracion: Transicion de Regimen en la Hipotesis del Bosque Oscuro Revelada por Simulaciones de Control",
+  "keywords": [
+    "Fermi paradox",
+    "Dark Forest hypothesis",
+    "Monte Carlo simulation",
+    "Galactic Habitable Zone",
+    "Sobol sensitivity analysis",
+    "N-body dynamics",
+    "astrobiology",
+    "SETI"
+  ],
+  "upload_type": "publication",
+  "publication_type": "article",
+  "language": "spa",
+  "notes": "Paper listo para MNRAS/IJA. 96/100 tras 5 revisiones. Simulaciones Monte Carlo con dinamica N-body de deteccion-destruccion. 73 ejecuciones multi-semilla. Codigo Python reproducible con tests de regresion.",
+  "related_identifiers": [
+    {
+      "scheme": "url",
+      "identifier": "https://github.com/CienciaEstelar/dark-forest-mc",
+      "relation": "isSupplementedBy",
+      "resource_type": "software"
+    }
+  ],
+  "version": "5.0.0"
+}

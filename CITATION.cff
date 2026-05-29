@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "Si usas este software o paper, por favor citalo usando los metadatos de este archivo."
+title: "Del Silencio a la Concentracion: Transicion de Regimen en la Hipotesis del Bosque Oscuro Revelada por Simulaciones de Control"
+authors:
+  - family-names: Galaz
+    given-names: Juan
+    orcid: "https://orcid.org/0009-0007-7474-7560"
+    affiliation: "Investigador Independiente, Santiago, Chile"
+version: 5.0.0
+date-released: 2026-05-10
+repository-code: "https://github.com/CienciaEstelar/dark-forest-mc"
+license: MIT
+keywords:
+  - "Fermi paradox"
+  - "Dark Forest hypothesis"
+  - "Monte Carlo simulation"
+  - "Galactic Habitable Zone"
+  - "Sobol sensitivity analysis"
+  - "astrobiology"
+type: software
