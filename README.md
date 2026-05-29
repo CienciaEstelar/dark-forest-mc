@@ -157,7 +157,7 @@ CV = 68%. The aggressive fraction shows the largest first-order effect (1.5 sigm
 
 ## Citacion / Citation
 
-Paper in preparation for MNRAS. Zenodo DOI pending.
+Paper in preparation for MNRAS. 10.5281/zenodo.20451755.
 
 ```bibtex
 @article{galaz2026darkforest,
