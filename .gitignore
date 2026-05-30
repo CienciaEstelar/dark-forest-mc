@@ -11,3 +11,4 @@ __pycache__/
 *.out
 *.pdf
 !dark_forest_paper_es.pdf
+!dark_forest_1col_clean.pdf
