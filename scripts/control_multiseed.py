@@ -13,12 +13,18 @@ cuantifica el efecto espacial neto de la dinámica DF:
 
 Uso:
     source ~/anaconda3/bin/activate
+    # Se ejecuta directamente como script, desde cualquier directorio.
+    # Resuelve la raiz del proyecto de forma relativa a su propia
+    # ubicacion (scripts/../) via un symlink puente en un directorio
+    # temporal (ver _pkg_bridge.py), sin depender de como se llame la
+    # carpeta contenedora del repo:
+
     # Control pesimista (10 semillas):
-    python -m bosque_oscuro.control_multiseed --outdir ./output_control \\
+    python scripts/control_multiseed.py --outdir ./output_control \\
         --df-results ./output_analisis/multiseed_results.json
 
     # Control + cálculo de Δr con semillas específicas:
-    python -m bosque_oscuro.control_multiseed --outdir ./output_control \\
+    python scripts/control_multiseed.py --outdir ./output_control \\
         --seeds 42 7 13 99 256 1337 2024 2025 3 17 \\
         --df-results ./output_analisis/multiseed_results.json
 """
@@ -29,6 +35,11 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from _pkg_bridge import ensure_pkg_bridge
+
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+ensure_pkg_bridge(_REPO_ROOT)
 
 from bosque_oscuro.common.config import Parametros
 from bosque_oscuro.sim.sociologia import normalizar_probabilidades

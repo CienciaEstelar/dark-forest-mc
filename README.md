@@ -44,12 +44,12 @@ dark_forest_paper_es.tex   Paper principal (espanol)
 
 ```bash
 source ~/anaconda3/bin/activate                 # Requerido: numpy, scipy, pandas, SALib
-python -m bosque_oscuro.scripts.run_pipeline --outdir ./output_sim --seed 42
+python scripts/run_pipeline.py --outdir ./output_sim --seed 42
 ```
 
 Escenario optimista (pesado, N=10,000 civilizaciones):
 ```bash
-python -m bosque_oscuro.scripts.run_pipeline --outdir ./output_sim --seed 42 --full-optimistic
+python scripts/run_pipeline.py --outdir ./output_sim --seed 42 --full-optimistic
 ```
 
 ### Resultados clave
@@ -113,12 +113,12 @@ Publication target: **International Journal of Astrobiology / MNRAS**.
 
 ```bash
 source ~/anaconda3/bin/activate                 # Requires: numpy, scipy, pandas, SALib
-python -m bosque_oscuro.scripts.run_pipeline --outdir ./output_sim --seed 42
+python scripts/run_pipeline.py --outdir ./output_sim --seed 42
 ```
 
 Optimistic scenario (heavy, N=10,000 civilisations):
 ```bash
-python -m bosque_oscuro.scripts.run_pipeline --outdir ./output_sim --seed 42 --full-optimistic
+python scripts/run_pipeline.py --outdir ./output_sim --seed 42 --full-optimistic
 ```
 
 ### Key Results

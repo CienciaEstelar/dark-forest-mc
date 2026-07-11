@@ -48,23 +48,24 @@ Contexto de los otros módulos
 
 Uso
 ---
-Ejecutar SIEMPRE desde el directorio **padre** del paquete `bosque_oscuro/`.
-Ejemplo con la estructura actual del proyecto:
+Se ejecuta directamente como script (no como módulo `-m`), desde
+cualquier directorio. El propio archivo resuelve la raíz del proyecto
+de forma relativa a su ubicación (`scripts/../`), sin depender de cómo
+se llame la carpeta que lo contiene (`bosque_oscuro/`, `dark-forest-mc/`,
+etc.):
 
-    vault-juan/proyectos/
-    └── bosque_oscuro/
-        ├── __init__.py
-        ├── cli/
-        ├── sim/
-        ├── analysis/
-        ├── common/
-        └── scripts/
-            └── run_pipeline.py   ← este archivo
+    proyecto/            ← puede llamarse como sea
+    ├── __init__.py
+    ├── cli/
+    ├── sim/
+    ├── analysis/
+    ├── common/
+    └── scripts/
+        └── run_pipeline.py   ← este archivo
 
-entonces:
+entonces, desde cualquier lugar:
 
-    cd vault-juan/proyectos
-    python -m bosque_oscuro.scripts.run_pipeline \
+    python /ruta/a/proyecto/scripts/run_pipeline.py \
         --outdir ./output_sim \
         --dpi 600 \
         --seed 42 \
@@ -98,8 +99,13 @@ import subprocess
 import sys
 import os
 import json
+from pathlib import Path
 from typing import List, Optional
 
+from _pkg_bridge import ensure_pkg_bridge, subprocess_env
+
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+_BRIDGE_DIR = ensure_pkg_bridge(_REPO_ROOT)
 
 # Intentamos importar la narrativa LLM; si no está, lo dejamos opcional
 try:
@@ -131,7 +137,10 @@ def run_cmd(cmd: List[str]) -> int:
     print(f"▶ Ejecutando comando: {' '.join(cmd)}")
     print("═" * 72)
 
-    proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+    proc = subprocess.Popen(
+        cmd, stdout=sys.stdout, stderr=sys.stderr,
+        cwd=str(_REPO_ROOT), env=subprocess_env(_BRIDGE_DIR),
+    )
     proc.communicate()
 
     return proc.returncode

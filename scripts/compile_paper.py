@@ -23,15 +23,16 @@ Cambios v2.1 → v2.2:
 - Mejora: informa el número de warnings y errores del .log al final.
 - Mejora: --keep-aux no pregunta interactivamente (útil en CI/scripts).
 
-Uso básico:
-    python compile_paper.py dark_forest_paper
-    python compile_paper.py dark_forest_paper --output-dir ./output
-    python compile_paper.py dark_forest_paper --keep-aux
-    python compile_paper.py dark_forest_paper --yes          # no-interactivo
-    python compile_paper.py dark_forest_paper --compiler xelatex
+Uso básico (el .tex vigente vive en la raíz del proyecto, el script en
+scripts/; se ejecuta desde la raíz del proyecto):
+    python scripts/compile_paper.py dark_forest_paper_es
+    python scripts/compile_paper.py dark_forest_paper_es --output-dir ./output
+    python scripts/compile_paper.py dark_forest_paper_es --keep-aux
+    python scripts/compile_paper.py dark_forest_paper_es --yes          # no-interactivo
+    python scripts/compile_paper.py dark_forest_paper_es --compiler xelatex
 
-Desde otro directorio:
-    python /ruta/compile_paper.py /ruta/al/dark_forest_paper
+Desde otro directorio (con ruta absoluta al .tex):
+    python /ruta/proyecto/scripts/compile_paper.py /ruta/proyecto/dark_forest_paper_es
 """
 
 import os
@@ -381,21 +382,21 @@ def main():
         description='compile_paper.py v2.2 — Compilador LaTeX para papers científicos.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Ejemplos:
-  # Compilar dark_forest_paper.tex en el mismo directorio:
-  python compile_paper.py dark_forest_paper
+Ejemplos (ejecutado desde la raíz del proyecto, .tex vigente en la raíz):
+  # Compilar dark_forest_paper_es.tex:
+  python scripts/compile_paper.py dark_forest_paper_es
 
   # Especificar ruta completa:
-  python compile_paper.py /home/juan-galaz/Escritorio/bosque_oscuro/dark_forest_paper
+  python scripts/compile_paper.py /ruta/al/proyecto/dark_forest_paper_es
 
   # Guardar PDF en subdirectorio 'output/':
-  python compile_paper.py dark_forest_paper --output-dir ./output
+  python scripts/compile_paper.py dark_forest_paper_es --output-dir ./output
 
   # Usar xelatex y conservar auxiliares:
-  python compile_paper.py dark_forest_paper --compiler xelatex --keep-aux
+  python scripts/compile_paper.py dark_forest_paper_es --compiler xelatex --keep-aux
 
   # Generar figuras antes de compilar:
-  python compile_paper.py dark_forest_paper --run-script "python generate_figures.py"
+  python scripts/compile_paper.py dark_forest_paper_es --run-script "python generate_figures.py"
         """
     )
     parser.add_argument(
@@ -403,7 +404,7 @@ Ejemplos:
         nargs='?',
         default='paper',
         help='Nombre del .tex SIN extensión, o ruta completa. '
-             'Ejemplo: dark_forest_paper'
+             'Ejemplo: dark_forest_paper_es'
     )
     parser.add_argument(
         '--compiler',
