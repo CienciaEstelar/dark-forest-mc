@@ -58,12 +58,13 @@ Ejemplo con la estructura actual del proyecto:
         ├── sim/
         ├── analysis/
         ├── common/
-        └── run_pipeline.py   ← este archivo
+        └── scripts/
+            └── run_pipeline.py   ← este archivo
 
 entonces:
 
     cd vault-juan/proyectos
-    python -m bosque_oscuro.run_pipeline \
+    python -m bosque_oscuro.scripts.run_pipeline \
         --outdir ./output_sim \
         --dpi 600 \
         --seed 42 \

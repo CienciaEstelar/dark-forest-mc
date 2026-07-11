@@ -34,21 +34,22 @@ bosque_oscuro/
  common/        Config (dataclass con todos los parametros), I/O, tipos
  cli/           Entradas CLI: sim_main.py, analyze_main.py
  tests/         Tests de regresion (5/5 pasando)
-run_pipeline.py     Orquestador: simulacion + analisis + LLM opcional
-multiseed.py        Barrido multi-semilla pesimista (50 seeds)
-control_multiseed.py Control: geometria ZGH pura sin Bosque Oscuro
+ scripts/       Orquestadores: run_pipeline.py, compile_paper.py, control_multiseed.py
+ docs/          ROADMAP_CORRECCION.md (trazabilidad de revisiones)
+ paper/archive/ Versiones descartadas del paper (obsoletas o alternativas)
+multiseed.py        Barrido multi-semilla pesimista (50 seeds) -- import relativo, debe quedar en la raiz del paquete
 mn2e.cls            Clase de documento MNRAS
 dark_forest_paper_es.tex   Paper principal (espanol)
 ### Ejecucion rapida
 
 ```bash
 source ~/anaconda3/bin/activate                 # Requerido: numpy, scipy, pandas, SALib
-python -m bosque_oscuro.run_pipeline --outdir ./output_sim --seed 42
+python -m bosque_oscuro.scripts.run_pipeline --outdir ./output_sim --seed 42
 ```
 
 Escenario optimista (pesado, N=10,000 civilizaciones):
 ```bash
-python -m bosque_oscuro.run_pipeline --outdir ./output_sim --seed 42 --full-optimistic
+python -m bosque_oscuro.scripts.run_pipeline --outdir ./output_sim --seed 42 --full-optimistic
 ```
 
 ### Resultados clave
@@ -112,12 +113,12 @@ Publication target: **International Journal of Astrobiology / MNRAS**.
 
 ```bash
 source ~/anaconda3/bin/activate                 # Requires: numpy, scipy, pandas, SALib
-python -m bosque_oscuro.run_pipeline --outdir ./output_sim --seed 42
+python -m bosque_oscuro.scripts.run_pipeline --outdir ./output_sim --seed 42
 ```
 
 Optimistic scenario (heavy, N=10,000 civilisations):
 ```bash
-python -m bosque_oscuro.run_pipeline --outdir ./output_sim --seed 42 --full-optimistic
+python -m bosque_oscuro.scripts.run_pipeline --outdir ./output_sim --seed 42 --full-optimistic
 ```
 
 ### Key Results
