@@ -21,15 +21,20 @@ def prob_deteccion(dist: float, edad_cazador: float, nivel_tec: float, p: Parame
     """
     Probabilidad de detección decreciente con la distancia, saturada en [0,1].
     Perfil lorentziano: 1/(1+(d/d₀)²) con d₀ desde config.
+
+    P_det → 0 cuando d → ∞: los falsos positivos (p_fp) NO participan del
+    canal de detección de blancos reales — un falso positivo apunta a cielo
+    vacío, no a una civilización existente. Antes del fix 2026-07-11, p_fp
+    actuaba como piso a cualquier distancia y generaba >96 % de las
+    destrucciones con mediana ~32 000 al.
     """
     r_eff = radio_deteccion_efectivo(edad_cazador, nivel_tec, p)
     # Atenuación lorentziana con distancia (d₀ desde config)
     d0 = float(p.tecnologia_deteccion.get("d0_atenuacion", 100.0))
     atenuacion = 1.0 / (1.0 + (dist / d0) ** 2)
     pr = min(1.0, r_eff / p.tecnologia_deteccion["radio_max_realista"]) * atenuacion
-    # Falsos positivos/negativos (ruido del sistema)
-    pr = pr * (1.0 - p.tecnologia_deteccion["probabilidad_falsos_negativos"]) + \
-         (1.0 - pr) * p.tecnologia_deteccion["probabilidad_falsos_positivos"]
+    # Falsos negativos (señal real perdida por ruido del sistema)
+    pr = pr * (1.0 - p.tecnologia_deteccion["probabilidad_falsos_negativos"])
     return min(1.0, max(0.0, pr))
 
 
@@ -60,9 +65,8 @@ def prob_deteccion_batch(dists: np.ndarray, edad_cazador: float, nivel_tec: floa
     d0 = float(p.tecnologia_deteccion.get("d0_atenuacion", 100.0))
     rho = min(1.0, r_eff / float(p.tecnologia_deteccion["radio_max_realista"]))
     p_fn = float(p.tecnologia_deteccion["probabilidad_falsos_negativos"])
-    p_fp = float(p.tecnologia_deteccion["probabilidad_falsos_positivos"])
 
     atenuacion = 1.0 / (1.0 + (dists / d0) ** 2)
-    pr = rho * atenuacion
-    pr = pr * (1.0 - p_fn) + (1.0 - pr) * p_fp
+    # Sin piso p_fp: ver docstring de prob_deteccion (fix 2026-07-11)
+    pr = rho * atenuacion * (1.0 - p_fn)
     return np.clip(pr, 0.0, 1.0)

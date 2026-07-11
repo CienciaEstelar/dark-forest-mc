@@ -137,6 +137,10 @@ def paso5_bosque_oscuro(catalogo_inicial: pd.DataFrame, p: Parametros, ftl_enabl
             pr_det = prob_deteccion_batch(dists, edad, float(niveles[idx_caz]), p)
             pr_det *= mods_arr
             pr_det *= _mod_caz
+            # Causalidad: la señal de la presa debe haber llegado al cazador
+            # (fix 2026-07-11; antes el 30 % de los kills eran acausales)
+            edad_presas = t - nac[vecinos_arr]
+            pr_det *= (dists <= edad_presas * v_luz * ftl)
             np.clip(pr_det, 0.0, 1.0, out=pr_det)
 
             # ── Vectorizado: Bernoulli para todas las presas ──

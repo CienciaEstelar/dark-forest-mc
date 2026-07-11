@@ -40,6 +40,9 @@ class Parametros:
     distribucion_L: Dict[str, float] = field(default_factory=lambda: {"tipo": "lognormal", "media": 10000.0, "sigma": 1.5, "min": 100.0, "max": 1e6})
 
     # ---- Tecnología de detección ----
+    # probabilidad_falsos_positivos NO participa del canal de detección letal
+    # desde el fix 2026-07-11 (un falso positivo apunta a cielo vacío, no a una
+    # civilización real). Se mantiene definido por compatibilidad de registro.
     tecnologia_deteccion: Dict[str, float] = field(default_factory=lambda: {
         "radio_max_realista": 1000.0, "eficiencia_evolucion": 1e-3,
         "d0_atenuacion": 100.0,

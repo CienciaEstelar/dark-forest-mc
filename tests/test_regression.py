@@ -27,16 +27,19 @@ from bosque_oscuro.analysis.vecino import analizar_vecino_mas_cercano
 
 # ---------------------------------------------------------------------------
 # Hardcoded fixtures — DO NOT EDIT without re-running the full model
-# Actualizados 2026-05-10: vectorización del loop interno de paso5
-# cambia la secuencia de números aleatorios (np.random.random(n) vs n×random())
-# pero preserva las propiedades estadísticas del modelo.
+# Actualizados 2026-07-11: fix físico del canal de detección letal —
+# (1) eliminado el piso de falsos positivos p_fp de prob_deteccion
+#     (generaba >96 % de las destrucciones, con mediana ~32 000 al), y
+# (2) check de causalidad en paso5: d ≤ c·(t − t_nac_presa)
+#     (antes el 30 % de los kills eran acausales).
+# Valores previos (modelo con artefacto): destruidas 61-80 por seed.
 # ---------------------------------------------------------------------------
 FIXTURES = {
-    42:  {"destruidas": 61,  "dist_vecino": 1874.3, "ratio": 1.4605},
-    7:   {"destruidas": 67,  "dist_vecino": 1784.1, "ratio": 1.3828},
-    13:  {"destruidas": 70,  "dist_vecino": 1821.6, "ratio": 1.4081},
-    99:  {"destruidas": 67,  "dist_vecino": 1855.1, "ratio": 1.4378},
-    256: {"destruidas": 80,  "dist_vecino": 1877.4, "ratio": 1.4381},
+    42:  {"destruidas": 1,  "dist_vecino": 1791.5, "ratio": 1.4660},
+    7:   {"destruidas": 0,  "dist_vecino": 1638.6, "ratio": 1.3419},
+    13:  {"destruidas": 3,  "dist_vecino": 1747.4, "ratio": 1.4278},
+    99:  {"destruidas": 6,  "dist_vecino": 1824.9, "ratio": 1.4877},
+    256: {"destruidas": 3,  "dist_vecino": 1710.3, "ratio": 1.3975},
 }
 
 DIST_TOL = 50.0   # ly
