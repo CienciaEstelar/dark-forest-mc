@@ -8,7 +8,7 @@
 
 ---
 
-## 🇨🇱 Espanol
+## 🇨🇱 Español
 
 Simulacion Monte Carlo del ciclo completo **deteccion -> destruccion -> silencio** de la hipotesis del Bosque Oscuro como solucion a la Paradoja de Fermi.
 
