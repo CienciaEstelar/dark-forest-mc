@@ -278,3 +278,54 @@ Esto NO invalida el paper — lo reencuadra:
 - Corrección altura del disco (requiere re-ejecutar todo)
 
 ---
+
+## REVISIÓN 6 — Fix físico del canal de detección letal (2026-07-11)
+
+**Origen:** auditoría hostil al repo público. Hallazgo: el término de falsos
+positivos de la ec. (eq:pdet) actuaba como piso de detección a cualquier
+distancia (P_det → p_fp = 0,01 cuando d → ∞), y generaba >96 % de las
+destrucciones con mediana de kill ~32 000 al (32× el r_max = 1 000 al
+justificado con Troitskij 1989 / Loeb 2007). Adicionalmente, el 30 % de los
+kills eran acausales (la señal de la presa no había tenido tiempo de llegar
+al cazador). La afirmación del paper "la transición de régimen es robusta"
+no sobrevive a p_fp → 0.
+
+### FIX 6.1 — p_fp fuera del canal letal (`sim/tecnologia.py`)
+Nueva forma: P_det = (1 − p_fn) · ρ(τ,ν) / (1 + (d/d₀)²), con P_det → 0
+cuando d → ∞. Un falso positivo apunta a cielo vacío, no a una civilización
+real. Commit d75c4ea.
+
+### FIX 6.2 — Causalidad (`sim/dinamica.py`)
+Condición d ≤ c·(t − t_nac_presa) en paso5: una civilización solo es
+detectable cuando su señal alcanzó al cazador. Commit d75c4ea.
+
+### Tests
+- `tests/test_fisica_deteccion.py` (nuevo): fija ambas propiedades (TDD,
+  verificado RED→GREEN).
+- `tests/test_regression.py`: fixtures regenerados con el modelo corregido.
+
+### Resultados definitivos (JSON completo: `docs/resultados_definitivos_fix_pfp_causal.json`)
+
+| Métrica | Paper (v5.0) | Modelo corregido |
+|---|---|---|
+| Pesimista destruidas (50 seeds) | 70,7 ± 7,2 (16,1 %) | 2,60 ± 1,50 (0,59 %) |
+| Pesimista Δr | +0,007 ± 0,066 | +0,0045 ± 0,0032 (apareado) |
+| Optimista destruidas (10 seeds, N=10⁴) | 8 583 ± 22 (85,8 %) | 2 287 ± 46 (22,9 %) |
+| Optimista ratio obs/Poisson | 0,578 ± 0,020 | 1,177 ± 0,008 |
+| **Optimista Δr** | **−0,538 ± 0,020 (27σ)** | **+0,060 ± 0,008 (~25σ)** |
+| Mediana distancia kill (opt.) | ~32 000 al | 2 408 al |
+
+**Interpretación:** el resultado central del paper v5.0 (concentración
+Δr = −0,54) era un artefacto del piso p_fp. El modelo corregido muestra
+dispersión modesta y monotónica con la densidad (+0,005 → +0,060), con
+señal altamente significativa en régimen denso. Los kills ocurren a
+distancias físicamente coherentes (mediana ~2 400 al; la cola lorentziana
+explica los kills lejanos residuales).
+
+### Pendiente derivado de esta revisión
+- Reescribir `dark_forest_paper_es.tex` (ec. detección, resultados,
+  abstract, título, limitaciones). Evaluar corrección formal con MNRAS.
+- Re-Sobol con el modelo corregido, réplicas por punto (CV actual 79 %
+  con 1 réplica de 100 civs) e incluyendo p_fn entre los parámetros.
+- Packaging: tests y Dockerfile rotos en clone limpio (imports
+  `bosque_oscuro.*` vs carpeta `dark-forest-mc`); agregar CI.

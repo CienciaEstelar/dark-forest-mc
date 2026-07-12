@@ -1,0 +1,1001 @@
+{
+  "modelo": "definitivo b26e7f1 (sin piso p_fp + causalidad)",
+  "seeds_50": [
+    42,
+    7,
+    13,
+    99,
+    256,
+    1337,
+    2024,
+    2025,
+    3,
+    17,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139
+  ],
+  "seeds_10": [
+    42,
+    7,
+    13,
+    99,
+    256,
+    1337,
+    2024,
+    2025,
+    3,
+    17
+  ],
+  "pesimista": {
+    "runs": [
+      {
+        "seed": 42,
+        "destruidas": 1,
+        "pct": 0.22727272727272727,
+        "ratio": 1.4660407664820307,
+        "kill_dist_mediana": 2304.44873046875,
+        "kill_dist_max": 2304.44873046875
+      },
+      {
+        "seed": 7,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3419139826189477,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 13,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.4277587972988204,
+        "kill_dist_mediana": 1988.7972412109375,
+        "kill_dist_max": 2568.12255859375
+      },
+      {
+        "seed": 99,
+        "destruidas": 6,
+        "pct": 1.3636363636363635,
+        "ratio": 1.487676206712584,
+        "kill_dist_mediana": 736.1881103515625,
+        "kill_dist_max": 5960.00927734375
+      },
+      {
+        "seed": 256,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.3974570548350562,
+        "kill_dist_mediana": 372.43646240234375,
+        "kill_dist_max": 1007.48681640625
+      },
+      {
+        "seed": 1337,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.4122286789862275,
+        "kill_dist_mediana": 290.8431396484375,
+        "kill_dist_max": 592.6712036132812
+      },
+      {
+        "seed": 2024,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.3862713002752123,
+        "kill_dist_mediana": 604.621337890625,
+        "kill_dist_max": 3515.164794921875
+      },
+      {
+        "seed": 2025,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.3969620263358609,
+        "kill_dist_mediana": 987.9946899414062,
+        "kill_dist_max": 2563.607666015625
+      },
+      {
+        "seed": 3,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.4267815411257265,
+        "kill_dist_mediana": 1650.4324951171875,
+        "kill_dist_max": 2455.6474609375
+      },
+      {
+        "seed": 17,
+        "destruidas": 1,
+        "pct": 0.22727272727272727,
+        "ratio": 1.4736477713849359,
+        "kill_dist_mediana": 174.73159790039062,
+        "kill_dist_max": 174.73159790039062
+      },
+      {
+        "seed": 100,
+        "destruidas": 1,
+        "pct": 0.22727272727272727,
+        "ratio": 1.4698618004923065,
+        "kill_dist_mediana": 1365.80859375,
+        "kill_dist_max": 1365.80859375
+      },
+      {
+        "seed": 101,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.4326350045799072,
+        "kill_dist_mediana": 8346.289825439453,
+        "kill_dist_max": 15825.20703125
+      },
+      {
+        "seed": 102,
+        "destruidas": 1,
+        "pct": 0.22727272727272727,
+        "ratio": 1.3831820799930383,
+        "kill_dist_mediana": 601.747802734375,
+        "kill_dist_max": 601.747802734375
+      },
+      {
+        "seed": 103,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.3832739408925225,
+        "kill_dist_mediana": 1877.0520629882812,
+        "kill_dist_max": 2480.620849609375
+      },
+      {
+        "seed": 104,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.3700959998489224,
+        "kill_dist_mediana": 355.73291015625,
+        "kill_dist_max": 953.8544311523438
+      },
+      {
+        "seed": 105,
+        "destruidas": 4,
+        "pct": 0.9090909090909091,
+        "ratio": 1.4331797757660862,
+        "kill_dist_mediana": 4606.402099609375,
+        "kill_dist_max": 12525.822265625
+      },
+      {
+        "seed": 106,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.389452288803372,
+        "kill_dist_mediana": 770.1516723632812,
+        "kill_dist_max": 1306.3621826171875
+      },
+      {
+        "seed": 107,
+        "destruidas": 4,
+        "pct": 0.9090909090909091,
+        "ratio": 1.4062705414607701,
+        "kill_dist_mediana": 753.8277893066406,
+        "kill_dist_max": 1946.6142578125
+      },
+      {
+        "seed": 108,
+        "destruidas": 4,
+        "pct": 0.9090909090909091,
+        "ratio": 1.5028250272305075,
+        "kill_dist_mediana": 2793.5689697265625,
+        "kill_dist_max": 3890.83544921875
+      },
+      {
+        "seed": 109,
+        "destruidas": 1,
+        "pct": 0.22727272727272727,
+        "ratio": 1.4238472605486803,
+        "kill_dist_mediana": 1133.4493408203125,
+        "kill_dist_max": 1133.4493408203125
+      },
+      {
+        "seed": 110,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.4488352876382924,
+        "kill_dist_mediana": 891.111083984375,
+        "kill_dist_max": 1304.157470703125
+      },
+      {
+        "seed": 111,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.4258533793988712,
+        "kill_dist_mediana": 2289.116729736328,
+        "kill_dist_max": 3562.879150390625
+      },
+      {
+        "seed": 112,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3448277249885425,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 113,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.407190592657287,
+        "kill_dist_mediana": 218.2591209411621,
+        "kill_dist_max": 333.4998474121094
+      },
+      {
+        "seed": 114,
+        "destruidas": 6,
+        "pct": 1.3636363636363635,
+        "ratio": 1.3318910297786606,
+        "kill_dist_mediana": 1039.8819885253906,
+        "kill_dist_max": 2413.45703125
+      },
+      {
+        "seed": 115,
+        "destruidas": 5,
+        "pct": 1.1363636363636365,
+        "ratio": 1.435104634324352,
+        "kill_dist_mediana": 431.59442138671875,
+        "kill_dist_max": 984.662353515625
+      },
+      {
+        "seed": 116,
+        "destruidas": 4,
+        "pct": 0.9090909090909091,
+        "ratio": 1.379052241527254,
+        "kill_dist_mediana": 2030.1294250488281,
+        "kill_dist_max": 10226.5009765625
+      },
+      {
+        "seed": 117,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.3695554326888695,
+        "kill_dist_mediana": 351.0509490966797,
+        "kill_dist_max": 417.9388732910156
+      },
+      {
+        "seed": 118,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.397740173108897,
+        "kill_dist_mediana": 951.2154769897461,
+        "kill_dist_max": 1800.091064453125
+      },
+      {
+        "seed": 119,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.4326584534494333,
+        "kill_dist_mediana": 268.7983703613281,
+        "kill_dist_max": 6193.07177734375
+      },
+      {
+        "seed": 120,
+        "destruidas": 1,
+        "pct": 0.22727272727272727,
+        "ratio": 1.3666811177936968,
+        "kill_dist_mediana": 399.7669372558594,
+        "kill_dist_max": 399.7669372558594
+      },
+      {
+        "seed": 121,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4402296480199182,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 122,
+        "destruidas": 1,
+        "pct": 0.22727272727272727,
+        "ratio": 1.4128097343459827,
+        "kill_dist_mediana": 318.60675048828125,
+        "kill_dist_max": 318.60675048828125
+      },
+      {
+        "seed": 123,
+        "destruidas": 4,
+        "pct": 0.9090909090909091,
+        "ratio": 1.4739230254539262,
+        "kill_dist_mediana": 243.5763397216797,
+        "kill_dist_max": 525.8303833007812
+      },
+      {
+        "seed": 124,
+        "destruidas": 1,
+        "pct": 0.22727272727272727,
+        "ratio": 1.3736214209102744,
+        "kill_dist_mediana": 240.61709594726562,
+        "kill_dist_max": 240.61709594726562
+      },
+      {
+        "seed": 125,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.378471042940909,
+        "kill_dist_mediana": 1979.3605346679688,
+        "kill_dist_max": 3099.692626953125
+      },
+      {
+        "seed": 126,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.3597089310448658,
+        "kill_dist_mediana": 641.28076171875,
+        "kill_dist_max": 1011.8870849609375
+      },
+      {
+        "seed": 127,
+        "destruidas": 1,
+        "pct": 0.22727272727272727,
+        "ratio": 1.466721545673438,
+        "kill_dist_mediana": 133.48731994628906,
+        "kill_dist_max": 133.48731994628906
+      },
+      {
+        "seed": 128,
+        "destruidas": 5,
+        "pct": 1.1363636363636365,
+        "ratio": 1.4211962534343903,
+        "kill_dist_mediana": 781.1862182617188,
+        "kill_dist_max": 4628.67919921875
+      },
+      {
+        "seed": 129,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.3744731388390683,
+        "kill_dist_mediana": 358.8094787597656,
+        "kill_dist_max": 884.7766723632812
+      },
+      {
+        "seed": 130,
+        "destruidas": 4,
+        "pct": 0.9090909090909091,
+        "ratio": 1.459870541416736,
+        "kill_dist_mediana": 387.51177978515625,
+        "kill_dist_max": 685.589111328125
+      },
+      {
+        "seed": 131,
+        "destruidas": 5,
+        "pct": 1.1363636363636365,
+        "ratio": 1.3758063278460684,
+        "kill_dist_mediana": 803.7435913085938,
+        "kill_dist_max": 12233.98046875
+      },
+      {
+        "seed": 132,
+        "destruidas": 4,
+        "pct": 0.9090909090909091,
+        "ratio": 1.4057298408590617,
+        "kill_dist_mediana": 275.42188262939453,
+        "kill_dist_max": 1222.3951416015625
+      },
+      {
+        "seed": 133,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.400395222937833,
+        "kill_dist_mediana": 330.8094787597656,
+        "kill_dist_max": 1841.4677734375
+      },
+      {
+        "seed": 134,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.4667296827917105,
+        "kill_dist_mediana": 446.7804718017578,
+        "kill_dist_max": 464.7255554199219
+      },
+      {
+        "seed": 135,
+        "destruidas": 1,
+        "pct": 0.22727272727272727,
+        "ratio": 1.4790977623535286,
+        "kill_dist_mediana": 61.750545501708984,
+        "kill_dist_max": 61.750545501708984
+      },
+      {
+        "seed": 136,
+        "destruidas": 5,
+        "pct": 1.1363636363636365,
+        "ratio": 1.386065660977202,
+        "kill_dist_mediana": 903.251220703125,
+        "kill_dist_max": 6083.71630859375
+      },
+      {
+        "seed": 137,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.4605064097367029,
+        "kill_dist_mediana": 316.37188720703125,
+        "kill_dist_max": 329.64776611328125
+      },
+      {
+        "seed": 138,
+        "destruidas": 2,
+        "pct": 0.45454545454545453,
+        "ratio": 1.4836448640683064,
+        "kill_dist_mediana": 1362.796875,
+        "kill_dist_max": 1409.9342041015625
+      },
+      {
+        "seed": 139,
+        "destruidas": 3,
+        "pct": 0.6818181818181818,
+        "ratio": 1.4912340405457405,
+        "kill_dist_mediana": 1926.501708984375,
+        "kill_dist_max": 35314.5234375
+      }
+    ],
+    "destruidas": {
+      "media": 2.6,
+      "std": 1.4966629547095767
+    },
+    "pct": {
+      "media": 0.5909090909090908,
+      "std": 0.34015067152490375
+    },
+    "ratio": {
+      "media": 1.4172197401444269,
+      "std": 0.04310343077412548
+    },
+    "kill_dist_mediana_global": 736.1881103515625,
+    "kill_dist_max_global": 35314.5234375
+  },
+  "control_pesimista": {
+    "runs": [
+      {
+        "seed": 42,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4642026991812256,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 7,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3419139826189477,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 13,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4215683170412112,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 99,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4749291918108278,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 256,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.391998641686127,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 1337,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4066563594912869,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 2024,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3805340804544475,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 2025,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3919502044202747,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 3,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.420508994675044,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 17,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.471663178148205,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 100,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4690158937299072,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 101,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4348029249733678,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 102,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3810863798555584,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 103,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3798352497025739,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 104,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.364041327893674,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 105,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4318911718978395,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 106,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3862172887880808,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 107,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3984523445075054,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 108,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.502020296780567,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 109,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4222664022788776,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 110,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4454725419261272,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 111,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4215705587401943,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 112,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3448277249885425,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 113,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4029613334261462,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 114,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.321427412073844,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 115,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4251532471305544,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 116,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.366845696194869,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 117,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.365897085039295,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 118,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3918624707079816,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 119,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4281712478651813,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 120,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3627454336261255,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 121,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4402296480199182,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 122,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4109408109826165,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 123,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4657323613519178,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 124,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.371550679485509,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 125,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.375181342051746,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 126,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3561051704016571,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 127,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4645810790273497,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 128,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4169125736359791,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 129,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3670017958518745,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 130,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4505704760730316,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 131,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3738323727793322,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 132,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3978375661798443,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 133,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3939204750344485,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 134,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4632309710557678,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 135,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4767503775069115,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 136,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.3774486039348892,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 137,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4563894066851368,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 138,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4798013295887793,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      },
+      {
+        "seed": 139,
+        "destruidas": 0,
+        "pct": 0.0,
+        "ratio": 1.4833675459244307,
+        "kill_dist_mediana": null,
+        "kill_dist_max": null
+      }
+    ],
+    "ratio": {
+      "media": 1.4126774853445112,
+      "std": 0.043319966560568524
+    }
+  },
+  "delta_r_pesimista": {
+    "media": 0.00454225479991568,
+    "std": 0.0032114787222459157,
+    "sem": 0.00045417167642727917
+  },
+  "optimista": {
+    "runs": [
+      {
+        "seed": 42,
+        "destruidas": 2208,
+        "pct": 22.08,
+        "ratio": 1.1705178459007113,
+        "kill_dist_mediana": 2368.038330078125,
+        "kill_dist_max": 65465.77734375
+      },
+      {
+        "seed": 7,
+        "destruidas": 2276,
+        "pct": 22.759999999999998,
+        "ratio": 1.1646877385093668,
+        "kill_dist_mediana": 2417.8863525390625,
+        "kill_dist_max": 77649.1171875
+      },
+      {
+        "seed": 13,
+        "destruidas": 2308,
+        "pct": 23.080000000000002,
+        "ratio": 1.1749734960563132,
+        "kill_dist_mediana": 2366.310791015625,
+        "kill_dist_max": 65880.5859375
+      },
+      {
+        "seed": 99,
+        "destruidas": 2280,
+        "pct": 22.8,
+        "ratio": 1.1852744603104521,
+        "kill_dist_mediana": 2276.97900390625,
+        "kill_dist_max": 67904.4453125
+      },
+      {
+        "seed": 256,
+        "destruidas": 2321,
+        "pct": 23.21,
+        "ratio": 1.1851699422427997,
+        "kill_dist_mediana": 2287.06884765625,
+        "kill_dist_max": 78542.421875
+      },
+      {
+        "seed": 1337,
+        "destruidas": 2230,
+        "pct": 22.3,
+        "ratio": 1.1660527453179839,
+        "kill_dist_mediana": 2471.3616943359375,
+        "kill_dist_max": 68358.15625
+      },
+      {
+        "seed": 2024,
+        "destruidas": 2263,
+        "pct": 22.63,
+        "ratio": 1.187969635084928,
+        "kill_dist_mediana": 2469.3251953125,
+        "kill_dist_max": 68328.4453125
+      },
+      {
+        "seed": 2025,
+        "destruidas": 2280,
+        "pct": 22.8,
+        "ratio": 1.1810122487593875,
+        "kill_dist_mediana": 2458.0833740234375,
+        "kill_dist_max": 72041.3359375
+      },
+      {
+        "seed": 3,
+        "destruidas": 2367,
+        "pct": 23.669999999999998,
+        "ratio": 1.1766862131273894,
+        "kill_dist_mediana": 2398.296630859375,
+        "kill_dist_max": 65232.51953125
+      },
+      {
+        "seed": 17,
+        "destruidas": 2337,
+        "pct": 23.369999999999997,
+        "ratio": 1.1769402564363876,
+        "kill_dist_mediana": 2443.883544921875,
+        "kill_dist_max": 83159.96875
+      }
+    ],
+    "destruidas": {
+      "media": 2287.0,
+      "std": 45.58727892734989
+    },
+    "pct": {
+      "media": 22.869999999999997,
+      "std": 0.4558727892734988
+    },
+    "ratio": {
+      "media": 1.1769284581745718,
+      "std": 0.0076762995052169405
+    },
+    "kill_dist_mediana_global": 2408.0914916992188,
+    "kill_dist_max_global": 83159.96875
+  },
+  "delta_r_optimista": {
+    "media": 0.060328458174571775,
+    "std": 0.0076762995052169405,
+    "control_usado": 1.1166
+  }
+}
