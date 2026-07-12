@@ -10,6 +10,7 @@
 \usepackage{multirow}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\usepackage[hyperpageref]{backref}
 \usepackage{url}
 \usepackage{siunitx}
 \usepackage{textcomp}
@@ -17,11 +18,28 @@
 % \doi no definido en mn2e — definición con hipervínculo
 \newcommand{\doi}[1]{\href{https://doi.org/#1}{\nolinkurl{doi:#1}}}
 
+% backref en español: cada entrada de la bibliografía indica en qué
+% página(s) se citó, con el número de página clickeable hacia el texto.
+\backrefspanish
+\renewcommand{\backreftwosep}{ y~}
+\renewcommand{\backreflastsep}{ y~}
+\renewcommand{\backref}[1]{}
+\renewcommand{\backrefalt}[4]{%
+  \ifcase #1 (No citado.)%
+  \or (Citado en la p\'agina #2.)%
+  \else (Citado en las p\'aginas #2.)%
+  \fi}
+
 % Suprime la cabecera "Mon. Not. R. Astron. Soc. ... / Printed <fecha> /
 % (MN LaTeX style file v2.2)" de la primera página — cosmética de journal,
 % no aplica a un preprint fuera del flujo editorial de MNRAS.
+% Suprime también el pie "(c) 2026 RAS, MNRAS 000, 000-000" de las
+% páginas de contenido (\ps@headings, la cabecera de página con el
+% número sigue intacta, solo se vacía el pie de copyright).
 \makeatletter
 \gdef\@journal{}
+\def\@oddfoot{}
+\def\@evenfoot{}
 \makeatother
 
 % ─── METADATOS DE REVISTA ─────────────────────────────────────────────────────
