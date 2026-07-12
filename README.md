@@ -1,8 +1,8 @@
 # Dark Forest Monte Carlo -- Simulacion del Bosque Oscuro
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://python.org)
-[![MNRAS](https://img.shields.io/badge/paper-MNRAS--ready-brightgreen)](https://mnras.oxfordjournals.org)
-[![Zenodo](https://img.shields.io/badge/DOI-Zenodo--pending-orange)](https://zenodo.org)
+[![MNRAS](https://img.shields.io/badge/paper-MNRAS--format-brightgreen)](https://mnras.oxfordjournals.org)
+[![Zenodo](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20451754-blue)](https://doi.org/10.5281/zenodo.20451754)
 
 **Español** (Chile 🇨🇱) abajo | **English** (UK 🇬🇧) below
 
@@ -14,32 +14,37 @@ Simulacion Monte Carlo del ciclo completo **deteccion -> destruccion -> silencio
 
 Target de publicacion: **International Journal of Astrobiology / MNRAS**.
 
+> ⚠️ **Correccion v6 (julio 2026):** una auditoria posterior a las primeras revisiones detecto que el termino de falsos positivos (`p_fp`) actuaba como piso de deteccion a cualquier distancia, generando >96% de las destrucciones a distancias no fisicas e invirtiendo el signo del efecto espacial reportado. La v5 reportaba concentracion masiva (Delta-r=-0.54); el modelo corregido muestra dispersion modesta (Delta-r=+0.060). Ver `docs/ROADMAP_CORRECCION.md` (Revision 6) y el Apendice B del paper para el historial completo.
+
 ### Caracteristicas principales
 
 - **Motor N-body con cKDTree** para deteccion de vecinos y dinamica de destruccion
+- **Condicion de causalidad**: ninguna civilizacion es detectable antes de que su señal, viajando a `c`, alcance al observador
 - **Sociologia de civilizaciones**: tipos agresivos, pasivos y ocultos con umbrales de amenaza
 - **Zona Galactica Habitable (GHZ)**: perfil gaussiano continuo (Lineweaver et al. 2004) con corte entre 10-30 kly
-- **Analisis de sensibilidad Sobol** (N=4096, 49,152 evaluaciones, 5 parametros Drake) -- convergencia alcanzada, ST < 1.0
-- **Validacion multi-semilla**: 50 semillas en regimen pesimista, 3-10 en optimista, con CV de metricas clave
+- **Analisis de sensibilidad de un factor sobre `p_fp`**: compara el modelo v5, sin piso de falsos positivos, y el modelo final (ver Resultados)
+- **Validacion multi-semilla**: 50 semillas DF + 50 de control apareadas en regimen pesimista, 10 DF + 3 de control en optimista
 - **Vectorizacion x5**: `prob_deteccion_batch` + loop interno numpy en paso5
-- **Paper cientifico completo** en espanol con `mn2e.cls` (formato MNRAS) -- 8pp, 3 figuras, English abstract
-- **5 revisiones superadas** -- Score final: **96/100** (ACEPTAR SIN CAMBIOS)
+- **Paper cientifico completo** en espanol con `mn2e.cls` (formato MNRAS), una columna, referencias con backref
+- **Suite de tests**: regresion (5 semillas) + propiedades fisicas del canal de deteccion (ausencia de piso, causalidad)
 
 ### Estructura del proyecto
 
 ```
-bosque_oscuro/
- sim/           Motor: sociologia, dinamica, tecnologia, espacio, tiempos, sensibilidad, pipeline, factory
- analysis/      Post-procesamiento: destruccion, GHZ, vecino mas cercano, robustez multi-seed
- common/        Config (dataclass con todos los parametros), I/O, tipos
- cli/           Entradas CLI: sim_main.py, analyze_main.py
- tests/         Tests de regresion (5/5 pasando)
- scripts/       Orquestadores: run_pipeline.py, compile_paper.py, control_multiseed.py
- docs/          ROADMAP_CORRECCION.md (trazabilidad de revisiones)
- paper/archive/ Versiones descartadas del paper (obsoletas o alternativas)
-multiseed.py        Barrido multi-semilla pesimista (50 seeds) -- import relativo, debe quedar en la raiz del paquete
-mn2e.cls            Clase de documento MNRAS
-dark_forest_paper_es.tex   Paper principal (espanol)
+dark-forest-mc/
+├── sim/           Motor: sociologia, dinamica, tecnologia, espacio, tiempos, sensibilidad, pipeline, factory
+├── analysis/      Post-procesamiento: destruccion, GHZ, vecino mas cercano, robustez multi-seed
+├── common/        Config (dataclass con todos los parametros), I/O, tipos
+├── cli/           Entradas CLI: sim_main.py, analyze_main.py
+├── tests/         test_regression.py (5/5) + test_fisica_deteccion.py (propiedades del canal)
+├── scripts/       Orquestadores: run_pipeline.py, compile_paper.py, control_multiseed.py
+├── docs/          ROADMAP_CORRECCION.md (trazabilidad completa) + resultados_definitivos_fix_pfp_causal.json
+├── paper/archive/ Versiones descartadas del paper (obsoletas o alternativas)
+├── multiseed.py   Barrido multi-semilla pesimista (50 seeds)
+├── mn2e.cls       Clase de documento MNRAS
+└── dark_forest_paper_es.tex   Paper principal (espanol)
+```
+
 ### Ejecucion rapida
 
 ```bash
@@ -52,30 +57,31 @@ Escenario optimista (pesado, N=10,000 civilizaciones):
 python scripts/run_pipeline.py --outdir ./output_sim --seed 42 --full-optimistic
 ```
 
-### Resultados clave
+### Resultados clave (modelo corregido v6)
 
 | Regimen | N | Destruidas | Delta-r | Sigma | Interpretacion |
 |---------|---|------------|---------|-------|----------------|
-| Pesimista | 440 | 69.6 +- 5.4 (15.8%) | +0.007 +- 0.066 | 0.1 | DF indistinguible de geometria ZGH |
-| **Optimista** | **10,000** | **8,583 +- 22 (85.8%)** | **-0.54 +- 0.02** | **27** | **DF MASIVO -- concentra supervivientes** |
+| Pesimista | 440 | 2.6 +- 1.5 (0.59%) | +0.0045 +- 0.0032 | ~1 | DF indistinguible de geometria ZGH |
+| **Optimista** | **10,000** | **2,287 +- 46 (22.9%)** | **+0.060 +- 0.008** | **7.8** | **DF dispersa a los supervivientes** |
 
-**Resultado principal**: en regimen de alta densidad, el Bosque Oscuro reduce el cociente
-observado/Poisson en **Delta-r = -0.54** (27 sigma). El silencio observado es consistente con
-Bosque Oscuro activo. En baja densidad, la geometria galactica (GHZ) domina la senal.
+**Resultado principal**: el efecto espacial neto del Bosque Oscuro es una **dispersion** modesta de los
+supervivientes que crece monotonicamente con la densidad poblacional, no la concentracion masiva
+reportada por la version previa del modelo. Las destrucciones son locales (eliminan preferentemente
+al vecino mas cercano), lo que desplaza la distribucion de distancias hacia valores mayores.
 
-### Sobol -- sensibilidad global
+### Sensibilidad -- el rol dominante de p_fp
 
-| Parametro | S1 | ST |
-|-----------|-----|-----|
-| f_agresivo | 0.067 +- 0.04 | 0.912 +- 0.04 |
-| d0_atenuacion | 0.021 +- 0.04 | 0.942 +- 0.04 |
-| umbral_amenaza | -0.016 +- 0.04 | 0.947 +- 0.04 |
-| radio_max | 0.034 +- 0.04 | 0.980 +- 0.04 |
-| vida_media_ext | 0.046 +- 0.04 | 0.954 +- 0.04 |
+| Configuracion | Tasa pesimista | Tasa optimista | Delta-r optimista |
+|----------------|----------------|----------------|--------------------|
+| v5 (p_fp aditivo) | 16.1% | 85.8% | -0.538 |
+| sin piso p_fp | 0.69% | 23.0% | +0.061 |
+| final (+ causalidad) | 0.59% | 22.9% | +0.060 |
 
-ST < 1.0 en todos los parametros. Sin parametro dominante -- el modelo esta controlado
-por interacciones de alto orden. CV = 68%. La fraccion de agresivos es el parametro
-con mayor efecto de primer orden (1.5 sigma de cero).
+`p_fp` era el parametro individual dominante del modelo v5 -- su eliminacion cambia las tasas de
+destruccion en factores de 4-27x e invierte el signo del efecto espacial diferencial. El analisis de
+Sobol de la v5 (que no incluia `p_fp` entre sus factores) reportaba correctamente que "ningun parametro
+dominaba", una conclusion valida solo dentro de ese subespacio de parametros. Un Sobol del modelo
+corregido, con replicas por punto y `p_fp`/`p_fn` incluidos, queda declarado como trabajo futuro.
 
 ### Parametros clave (common/config.py)
 
@@ -87,7 +93,8 @@ con mayor efecto de primer orden (1.5 sigma de cero).
 | `vida_media_extendida` | 1.43e8 yr | Calibrado (Sandberg et al. 2018) |
 | `radio_max_realista` | 1,000 ly | Troitskij 1989; Loeb & Zaldarriaga 2007 |
 | `d0` | 100 ly | Loeb & Zaldarriaga 2007; Forgan & Nichol 2011 |
-| `umbral_amenaza` | 0.7 | Parametro libre (Sobol: S1=-0.016) |
+| `umbral_amenaza` | 0.7 | Parametro libre |
+| `p_fp` | 0.01* | Libre; *desde v6 no participa del canal letal (ver Apendice B) |
 
 ---
 
@@ -98,16 +105,24 @@ hypothesis as a solution to the Fermi Paradox.
 
 Publication target: **International Journal of Astrobiology / MNRAS**.
 
+> ⚠️ **v6 correction (July 2026):** an audit following the initial review rounds found that the
+> false-positive term (`p_fp`) acted as a detection floor at any distance, generating >96% of
+> destructions at non-physical distances and inverting the sign of the reported spatial effect.
+> v5 reported massive concentration (Delta-r=-0.54); the corrected model shows modest dispersion
+> (Delta-r=+0.060). See `docs/ROADMAP_CORRECCION.md` (Revision 6) and Appendix B of the paper for
+> the full correction history.
+
 ### Key Features
 
 - **N-body simulation engine** with cKDTree for neighbour detection and destruction dynamics
+- **Causality condition**: no civilisation is detectable before its signal, travelling at `c`, reaches the observer
 - **Civilisation sociology**: aggressive, passive, and hidden types with threat thresholds
 - **Galactic Habitable Zone (GHZ)**: continuous Gaussian profile (Lineweaver et al. 2004), 10-30 kly
-- **Sobol sensitivity analysis** (N=4096, 49,152 evaluations, 5 Drake parameters) -- ST < 1.0 for all
-- **Multi-seed validation**: 50 seeds (pessimistic), 3-10 seeds (optimistic), CV on key metrics
+- **One-factor sensitivity analysis on `p_fp`**: compares the v5 model, the model without the false-positive floor, and the final model (see Results)
+- **Multi-seed validation**: 50 DF seeds + 50 paired controls (pessimistic), 10 DF + 3 controls (optimistic)
 - **5x vectorisation**: `prob_deteccion_batch` + inner numpy loop in step 5
-- **Full scientific paper** (`mn2e.cls` MNRAS format, 8pp, 3 figures, English abstract)
-- **5 reviews passed** -- Final score: **96/100** (ACCEPT WITHOUT CHANGES)
+- **Full scientific paper** (`mn2e.cls` MNRAS format, single column, backref-enabled bibliography)
+- **Test suite**: regression (5 seeds) + physical properties of the detection channel (no floor, causality)
 
 ### Quick Start
 
@@ -121,21 +136,26 @@ Optimistic scenario (heavy, N=10,000 civilisations):
 python scripts/run_pipeline.py --outdir ./output_sim --seed 42 --full-optimistic
 ```
 
-### Key Results
+### Key Results (corrected model, v6)
 
 | Regime | N | Destroyed | Delta-r | Sigma | Interpretation |
 |--------|---|-----------|---------|-------|----------------|
-| Pessimistic | 440 | 69.6 +- 5.4 (15.8%) | +0.007 +- 0.066 | 0.1 | DF indistinguishable from GHZ geometry |
-| **Optimistic** | **10,000** | **8,583 +- 22 (85.8%)** | **-0.54 +- 0.02** | **27** | **MASSIVE DF -- concentrates survivors** |
+| Pessimistic | 440 | 2.6 +- 1.5 (0.59%) | +0.0045 +- 0.0032 | ~1 | DF indistinguishable from GHZ geometry |
+| **Optimistic** | **10,000** | **2,287 +- 46 (22.9%)** | **+0.060 +- 0.008** | **7.8** | **DF disperses survivors** |
 
-**Main result**: in the high-density regime, the Dark Forest reduces the observed-to-Poisson ratio
-by **Delta-r = -0.54** (27 sigma). Observed silence is consistent with an active Dark Forest.
-At low density, galactic geometry (GHZ) dominates the signal.
+**Main result**: the net spatial effect of the Dark Forest is a modest dispersion of survivors that
+grows monotonically with population density, not the massive concentration reported by the previous
+version of the model. Destructions are local (they preferentially remove the nearest neighbour),
+which shifts the survivor distance distribution towards larger values.
 
-### Global Sensitivity (Sobol)
+### Sensitivity -- the dominant role of p_fp
 
-No single parameter dominates -- the model is controlled by high-order interactions.
-CV = 68%. The aggressive fraction shows the largest first-order effect (1.5 sigma from zero).
+`p_fp` was the individually dominant parameter of the v5 model: removing it changes destruction
+rates by factors of 4-27x and flips the sign of the differential spatial effect (see Spanish table
+above). The v5 Sobol analysis (which did not include `p_fp` among its factors) correctly reported
+that "no parameter dominates" -- a conclusion valid only within that parameter subspace. A Sobol
+analysis of the corrected model, with per-point replicates and `p_fp`/`p_fn` included, is left as
+future work.
 
 ---
 
@@ -158,15 +178,20 @@ CV = 68%. The aggressive fraction shows the largest first-order effect (1.5 sigm
 
 ## Citacion / Citation
 
-Paper in preparation for MNRAS. 10.5281/zenodo.20451755.
+Manuscript in MNRAS format, being prepared for submission. Published on Zenodo (the concept DOI
+below always resolves to the latest version):
+
+**Concept DOI:** [10.5281/zenodo.20451754](https://doi.org/10.5281/zenodo.20451754)
 
 ```bibtex
 @article{galaz2026darkforest,
-  title={{Del Silencio a la Concentracion: la Hipotesis del Bosque Oscuro
-          como Explicacion de la Paradoja de Fermi}},
-  author={Galaz, Juan and others},
-  journal={In preparation for MNRAS},
-  year={2026}
+  title={{Del Silencio a la Dispersion: El Efecto Espacial Neto del Bosque Oscuro
+          es Modesto y Crece con la Densidad}},
+  author={Galaz, Juan},
+  year={2026},
+  doi={10.5281/zenodo.20451754},
+  note={Manuscript in MNRAS format; software and data at
+        \url{https://github.com/CienciaEstelar/dark-forest-mc}}
 }
 ```
 
