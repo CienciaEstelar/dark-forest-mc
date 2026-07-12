@@ -1,4 +1,4 @@
-\documentclass[useAMS,usenatbib]{mn2e}
+\documentclass[useAMS,usenatbib,onecolumn]{mn2e}
 
 % ─── PAQUETES ─────────────────────────────────────────────────────────────────
 \usepackage[utf8]{inputenc}
@@ -16,6 +16,13 @@
 
 % \doi no definido en mn2e — definición con hipervínculo
 \newcommand{\doi}[1]{\href{https://doi.org/#1}{\nolinkurl{doi:#1}}}
+
+% Suprime la cabecera "Mon. Not. R. Astron. Soc. ... / Printed <fecha> /
+% (MN LaTeX style file v2.2)" de la primera página — cosmética de journal,
+% no aplica a un preprint fuera del flujo editorial de MNRAS.
+\makeatletter
+\gdef\@journal{}
+\makeatother
 
 % ─── METADATOS DE REVISTA ─────────────────────────────────────────────────────
 \title[Bosque Oscuro Monte Carlo]{
